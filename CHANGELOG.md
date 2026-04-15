@@ -1,0 +1,45 @@
+# Changelog
+
+Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+
+O formato é baseado no [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.1.0] - 2026-04-15
+
+### Adicionado
+- **Configuração Inicial**: Inicializado projeto Laravel 12 com `simplesoftwareio/simple-qrcode`, `laravel/reverb` e `livewire/livewire`.
+- **Arquitetura de Banco de Dados**:
+  - Tabelas principais: `roles`, `users`, `events`, `contests`, `evaluation_criteria`, `presentations`, `presentation_scores` e `user_documents`.
+  - Ativação de `SoftDeletes` em todas as entidades.
+  - Relacionamento de jurados com concursos (N:M).
+- **Autenticação e Segurança**:
+  - `AuthController` com login/logout e proteção Laravel Sanctum.
+  - Middleware `CheckRole` para controle de acesso por slug e vínculo específico de jurados.
+  - Restrição de rotas administrativas para usuários com perfil `admin`.
+- **Interface (Design System "Editorial Elétrico")**:
+  - Tailwind CSS 4.0 com paleta obsidiana e acentos neon.
+  - Layout com barra lateral retrátil (Alpine.js).
+  - Componentes com *glassmorphism* e tabelas sem linhas.
+- **Gestão de Eventos**:
+  - CRUD reativo via Livewire com proteção contra deleção de eventos ativos.
+- **Gestão de Concursos e Baremas**:
+  - CRUD de concursos vinculado a eventos.
+  - Editor de Critérios de Avaliação integrado com suporte a pesos e notas máximas.
+  - Validação para impedir duplicidade em prioridades de desempate.
+- **Gestão de Jurados**:
+  - CRUD de jurados com atribuição automática de papéis.
+  - Possibilidade de vincular jurados aos concursos tanto pela tela de Jurados quanto pela tela de Concursos.
+- **Seeders**:
+  - `RoleSeeder` para papéis padrão.
+  - `UserSeeder` para geração de usuários de teste com credenciais aleatórias.
+- **Testes Automatizados**:
+  - `AuthenticationTest`: Fluxo de login e logout.
+  - `RoleAccessTest`: Permissões de acesso por perfil.
+  - `EventCrudTest`: Integridade do CRUD de eventos.
+  - `ContestCrudTest`: Validação de concursos e critérios.
+  - `JurorCrudTest`: Gestão e vínculo de jurados.
+
+### Alterado
+- Refatoração da tabela `users` para remover `user_type`, centralizando permissões no `role_id`.
+- Ajuste de layout de `@yield` para `{{ $slot }}` para suporte total a componentes Livewire de página inteira.
