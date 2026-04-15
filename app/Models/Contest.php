@@ -43,4 +43,12 @@ class Contest extends Model
     {
         return $this->hasMany(EvaluationCriterion::class);
     }
+
+    /**
+     * Get the presentations for the contest.
+     */
+    public function presentations(): HasMany
+    {
+        return $this->hasMany(Presentation::class);
+    }
 }

@@ -30,6 +30,14 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Gestão de Jurados**:
   - CRUD de jurados com atribuição automática de papéis.
   - Possibilidade de vincular jurados aos concursos tanto pela tela de Jurados quanto pela tela de Concursos.
+- **Inscrições e Gestão de Documentos (Task 3)**:
+  - **Models e Relacionamentos**: Configuração de `Presentation` e `UserDocument` com suporte a `SoftDeletes` e vínculos com `User` e `Contest`.
+  - **Service Layer**: Implementação de `PresentationService` e `DocumentService` seguindo o padrão estático `run()`.
+  - **Validação Robusta**: Criação de Form Requests (`StorePresentationRequest`, `StoreDocumentRequest`, `EvaluatePresentationRequest`) para toda entrada de dados.
+  - **Área do Competidor**: Painel Livewire (`EnrollmentPanel`) para inscrição em concursos e upload seguro de documentos.
+  - **Análise Administrativa**: Painel Livewire (`PresentationAnalyzer`) para análise de apresentações e documentos, com sistema de aprovação/reprovação (justificativa obrigatória).
+  - **Segurança**: Rota de download de documentos protegida, garantindo acesso apenas ao dono ou administradores.
+  - **Testes Automatizados**: Inclusão de `PresentationServiceTest` e `DocumentServiceTest` para validar lógica de negócio e integridade de arquivos.
 - **Seeders**:
   - `RoleSeeder` para papéis padrão.
   - `UserSeeder` para geração de usuários de teste com credenciais aleatórias.

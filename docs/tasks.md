@@ -18,15 +18,15 @@ Implementação da hierarquia de sub-eventos e critérios de avaliação customi
   * **Configuração de Critérios (Barema):** Criar evaluation\_criteria. Implementar lógica para nota\_maxima, peso e prioridade\_desempate.
   * **Vínculo de Jurados:** Tabela associativa contest\_jurors para definir quem avalia qual concurso.
 
-## Task 3: Inscrições e Gestão de Documentos
+## [x] Task 3: Inscrições e Gestão de Documentos (Concluída)
 
 Foco na jornada do competidor e análise administrativa.
 
-  * **Apresentações:** Criar tabela presentations com status inicial EM\_ANALISE.
-  * **Gestão de Documentos:** Criar user\_documents linkada ao usuário.
-      * **Frontend:** Tela exclusiva do competidor para upload e acompanhamento de status. (Bloquear deleção de documentos ).
-  * **Análise Administrativa:** Tela para o Admin visualizar dados da apresentação + documentos e aprovar/reprovar com justificativa.
-  * **Service Layer:** Criar DocumentService e PresentationService seguindo o padrão estático run().
+  * **Apresentações:** Criar tabela presentations com status inicial EM\_ANALISE. [OK]
+  * **Gestão de Documentos:** Criar user\_documents linkada ao usuário. [OK]
+      * **Frontend:** Tela exclusiva do competidor para upload e acompanhamento de status. (Bloquear deleção de documentos ). [OK]
+  * **Análise Administrativa:** Tela para o Admin visualizar dados da apresentação + documentos e aprovar/reprovar com justificativa. [OK]
+  * **Service Layer:** Criar DocumentService e PresentationService seguindo o padrão estático run(). [OK]
 
 ## Task 4: Credenciamento e Real-Time (Core)
 

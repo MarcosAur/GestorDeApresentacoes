@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -66,6 +67,22 @@ class User extends Authenticatable
     public function contests(): BelongsToMany
     {
         return $this->belongsToMany(Contest::class, 'contest_jurors');
+    }
+
+    /**
+     * Get the presentations for the user (as competitor).
+     */
+    public function presentations(): HasMany
+    {
+        return $this->hasMany(Presentation::class, 'competitor_id');
+    }
+
+    /**
+     * Get the documents for the user.
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(UserDocument::class);
     }
 
     /**
