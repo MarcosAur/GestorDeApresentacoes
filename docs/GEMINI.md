@@ -30,10 +30,12 @@ Plataforma para gestão de concursos em eventos (K-Pop, Cosplay, etc.), substitu
 - **PSR:** Seguir padrões PSR-1, PSR-2 e PSR-12.
 - **MVC + Service Layer:** Lógica isolada em `app/Services` com método estático `run(...)`.
 - **Helpers:** Lógicas compartilhadas em `app/helpers`.
-- **Segurança:** 
-    - Validação via `Form Request` em todas as entradas.
+### Seguranca: 
+    - Validação via `Form Request` em todas as entradas (obrigatório para rotas e Livewire).
     - API REST com Bearer tokens; redirecionamento se token for inválido.
     - Middleware de acesso para validar permissões por slug de Role e vínculo jurado-concurso.
+    - **Gestão de Arquivos:** Uso de S3 com links temporários (5 min) para acesso privado.
+
 
 ### Regras de Negócio e Banco de Dados
 - **Deleção:** Registros só podem ser deletados se não possuírem dependências associadas.

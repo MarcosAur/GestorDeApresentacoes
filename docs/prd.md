@@ -26,6 +26,7 @@ O sistema possuirá quatro perfis distintos de acesso:
       * Confirma o envio definitivo da avaliação.
   * **Competidor:**
       * Acessa com login ou link para enviar os dados e documentações da sua apresentação.
+      * Upload de documentos limitado a arquivos de **5MB** (PDF, PNG, JPG). Os arquivos são armazenados de forma segura em nuvem (S3).
       * Acompanha o status da aprovação do seu cadastro (Apto/Inapto) e justificativas.
       * Visualiza as informações pertinentes ao evento, como data e sequência do cronograma de apresentações.
   * **Público:**
