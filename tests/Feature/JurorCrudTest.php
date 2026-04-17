@@ -46,10 +46,10 @@ class JurorCrudTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(\App\Livewire\JurorManager::class)
-            ->set('name', 'Jurado K-Pop')
-            ->set('email', 'jurado@test.com')
-            ->set('password', 'password123')
-            ->set('selectedContests', [$this->contest->id])
+            ->set('form.name', 'Jurado K-Pop')
+            ->set('form.email', 'jurado@test.com')
+            ->set('form.password', 'password123')
+            ->set('form.selectedContests', [$this->contest->id])
             ->call('save');
 
         $juror = User::where('email', 'jurado@test.com')->first();
@@ -73,7 +73,7 @@ class JurorCrudTest extends TestCase
 
         Livewire::test(\App\Livewire\JurorManager::class)
             ->call('openModal', $juror->id)
-            ->set('selectedContests', [$this->contest->id])
+            ->set('form.selectedContests', [$this->contest->id])
             ->call('save');
 
         $this->assertCount(1, $juror->fresh()->contests);

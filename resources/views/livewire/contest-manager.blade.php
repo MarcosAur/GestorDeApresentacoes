@@ -86,24 +86,24 @@
                     <div class="grid grid-cols-2 gap-6">
                         <div class="col-span-2">
                             <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Evento Pai</label>
-                            <select wire:model="event_id" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                            <select wire:model="form.event_id" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
                                 <option value="">Selecione um evento</option>
                                 @foreach($events as $event)
                                     <option value="{{ $event->id }}">{{ $event->name }}</option>
                                 @endforeach
                             </select>
-                            @error('event_id') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                            @error('form.event_id') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Nome do Concurso</label>
-                            <input wire:model="name" type="text" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
-                            @error('name') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                            <input wire:model="form.name" type="text" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                            @error('form.name') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
                             <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Status Inicial</label>
-                            <select wire:model="status" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                            <select wire:model="form.status" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
                                 <option value="AGENDADO">AGENDADO</option>
                                 <option value="EM_ANDAMENTO">EM_ANDAMENTO</option>
                                 <option value="FINALIZADO">FINALIZADO</option>
@@ -119,7 +119,7 @@
                         <div class="grid grid-cols-2 gap-3 max-h-32 overflow-y-auto pr-2">
                             @foreach($availableJurors as $juror)
                                 <label class="flex items-center space-x-3 p-2 bg-surface-container-low rounded-lg border border-outline-variant/5 cursor-pointer hover:bg-surface-container-high transition-colors">
-                                    <input type="checkbox" wire:model="selectedJurors" value="{{ $juror->id }}" class="w-4 h-4 rounded border-outline-variant bg-surface-container-highest text-primary focus:ring-primary">
+                                    <input type="checkbox" wire:model="form.selectedJurors" value="{{ $juror->id }}" class="w-4 h-4 rounded border-outline-variant bg-surface-container-highest text-primary focus:ring-primary">
                                     <span class="text-xs font-bold text-white">{{ $juror->name }}</span>
                                 </label>
                             @endforeach
@@ -139,7 +139,7 @@
                         </div>
                         @error('criteria_tiebreak') <p class="text-error text-xs font-bold text-center italic">{{ $message }}</p> @enderror
 
-                        @if(!empty($criteria))
+                        @if(!empty($form->criteria))
                             <div class="grid grid-cols-12 gap-3 px-4 text-[10px] font-bold text-white/40 uppercase tracking-widest">
                                 <div class="col-span-5">Nome do Critério</div>
                                 <div class="col-span-2 text-center">Nota Máx.</div>
@@ -150,19 +150,19 @@
                         @endif
 
                         <div class="space-y-3">
-                            @foreach($criteria as $index => $criterion)
+                            @foreach($form->criteria as $index => $criterion)
                                 <div class="grid grid-cols-12 gap-3 items-center bg-surface-container-low p-4 rounded-xl border border-outline-variant/5">
                                     <div class="col-span-5">
-                                        <input wire:model="criteria.{{ $index }}.name" type="text" placeholder="Ex: Originalidade" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
+                                        <input wire:model="form.criteria.{{ $index }}.name" type="text" placeholder="Ex: Originalidade" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
                                     </div>
                                     <div class="col-span-2">
-                                        <input wire:model="criteria.{{ $index }}.max_score" type="number" step="0.5" placeholder="10.0" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-center text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
+                                        <input wire:model="form.criteria.{{ $index }}.max_score" type="number" step="0.5" placeholder="10.0" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-center text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
                                     </div>
                                     <div class="col-span-2">
-                                        <input wire:model="criteria.{{ $index }}.weight" type="number" step="0.1" placeholder="1.0" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-center text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
+                                        <input wire:model="form.criteria.{{ $index }}.weight" type="number" step="0.1" placeholder="1.0" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-center text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
                                     </div>
                                     <div class="col-span-2">
-                                        <input wire:model="criteria.{{ $index }}.tiebreak_priority" type="number" placeholder="1" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-center text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
+                                        <input wire:model="form.criteria.{{ $index }}.tiebreak_priority" type="number" placeholder="1" class="w-full bg-surface-container-highest border-none rounded-lg p-2 text-sm text-center text-white focus:ring-1 focus:ring-secondary transition-all outline-none">
                                     </div>
                                     <div class="col-span-1 text-right">
                                         <button type="button" wire:click="removeCriterion({{ $index }})" class="text-white/20 hover:text-error transition-colors">
@@ -173,7 +173,7 @@
                                     </div>
                                 </div>
                             @endforeach
-                            @if(empty($criteria))
+                            @if(empty($form->criteria))
                                 <p class="text-center text-xs text-white/30 italic py-4">Nenhum critério definido. Adicione ao menos um.</p>
                             @endif
                         </div>

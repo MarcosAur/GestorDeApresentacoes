@@ -34,9 +34,9 @@ class EventCrudTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(\App\Livewire\EventList::class)
-            ->set('name', 'Evento de Teste')
-            ->set('event_date', '2026-12-31')
-            ->set('description', 'Uma descrição teste')
+            ->set('form.name', 'Evento de Teste')
+            ->set('form.event_date', '2026-12-31')
+            ->set('form.description', 'Uma descrição teste')
             ->call('save');
 
         $this->assertTrue(Event::where('name', 'Evento de Teste')->exists());
@@ -54,7 +54,7 @@ class EventCrudTest extends TestCase
 
         Livewire::test(\App\Livewire\EventList::class)
             ->call('openModal', $event->id)
-            ->set('name', 'Evento Atualizado')
+            ->set('form.name', 'Evento Atualizado')
             ->call('save');
 
         $this->assertEquals('Evento Atualizado', $event->fresh()->name);

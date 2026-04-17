@@ -76,18 +76,18 @@
                 <form wire:submit.prevent="evaluate" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium mb-1">Avaliação Final</label>
-                        <select wire:model.live="status" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
+                        <select wire:model.live="form.status" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
                             <option value="EM_ANALISE">Em Análise</option>
                             <option value="APTO">APTO</option>
                             <option value="INAPTO">INAPTO</option>
                         </select>
                     </div>
 
-                    @if($status === 'INAPTO')
+                    @if($form->status === 'INAPTO')
                         <div>
                             <label class="block text-sm font-medium mb-1">Justificativa da Reprovação</label>
-                            <textarea wire:model="justification_inapto" rows="4" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary" placeholder="Descreva o motivo pelo qual o competidor não está apto..."></textarea>
-                            @error('justification_inapto') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                            <textarea wire:model="form.justification_inapto" rows="4" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary" placeholder="Descreva o motivo pelo qual o competidor não está apto..."></textarea>
+                            @error('form.justification_inapto') <span class="text-error text-xs">{{ $message }}</span> @enderror
                         </div>
                     @endif
 

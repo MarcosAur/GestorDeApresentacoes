@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Forms\ContestForm;
 use App\Models\Contest;
 use App\Models\Event;
 use App\Models\User;
@@ -13,45 +14,20 @@ class ContestManager extends Component
 {
     use WithPagination;
 
+    public ContestForm $form;
     public $showModal = false;
     public $editingContest = null;
-
-    public $event_id;
-    public $name;
-    public $status = 'AGENDADO';
-
-    // Jurors and Criteria management
-    public $selectedJurors = [];
-    public $criteria = [];
-
-    protected $rules = [
-        'event_id' => 'required|exists:events,id',
-        'name' => 'required|string|max:255',
-        'status' => 'required|in:AGENDADO,EM_ANDAMENTO,FINALIZADO',
-        'selectedJurors' => 'array',
-        'selectedJurors.*' => 'exists:users,id',
-        'criteria.*.name' => 'required|string|max:255',
-        'criteria.*.max_score' => 'required|numeric|min:0',
-        'criteria.*.weight' => 'required|numeric|min:0',
-        'criteria.*.tiebreak_priority' => 'nullable|integer',
-    ];
 
     public function openModal($contestId = null)
     {
         $this->resetValidation();
-        $this->reset(['name', 'status', 'criteria', 'selectedJurors']);
+        $this->form->reset();
 
         if ($contestId) {
             $this->editingContest = Contest::with(['evaluationCriteria', 'jurors'])->findOrFail($contestId);
-            $this->event_id = $this->editingContest->event_id;
-            $this->name = $this->editingContest->name;
-            $this->status = $this->editingContest->status;
-            $this->criteria = $this->editingContest->evaluationCriteria->toArray();
-            $this->selectedJurors = $this->editingContest->jurors->pluck('id')->toArray();
+            $this->form->setContest($this->editingContest);
         } else {
             $this->editingContest = null;
-            $this->criteria = [];
-            $this->selectedJurors = [];
         }
 
         $this->showModal = true;
@@ -59,64 +35,24 @@ class ContestManager extends Component
 
     public function addCriterion()
     {
-        $this->criteria[] = [
-            'name' => '',
-            'max_score' => 10,
-            'weight' => 1,
-            'tiebreak_priority' => count($this->criteria) + 1,
-        ];
+        $this->form->addCriterion();
     }
 
     public function removeCriterion($index)
     {
-        unset($this->criteria[$index]);
-        $this->criteria = array_values($this->criteria);
+        $this->form->removeCriterion($index);
     }
 
     public function save()
     {
-        $this->validate();
+        $result = $this->form->save();
 
-        // Check for duplicate tiebreak priorities
-        $priorities = collect($this->criteria)->pluck('tiebreak_priority')->filter()->toArray();
-        if (count($priorities) !== count(array_unique($priorities))) {
-            $this->addError('criteria_tiebreak', 'Não é permitido repetir a mesma prioridade de desempate em critérios diferentes.');
+        if (isset($result['error'])) {
+            $this->addError('criteria_tiebreak', $result['error']);
             return;
         }
 
-        if ($this->editingContest) {
-            $this->editingContest->update([
-                'event_id' => $this->event_id,
-                'name' => $this->name,
-                'status' => $this->status,
-            ]);
-
-            // Sync jurors
-            $this->editingContest->jurors()->sync($this->selectedJurors);
-
-            // Sync criteria
-            $this->editingContest->evaluationCriteria()->delete();
-            foreach ($this->criteria as $criterionData) {
-                $this->editingContest->evaluationCriteria()->create($criterionData);
-            }
-
-            $this->dispatch('notify', 'Concurso, jurados e critérios atualizados!');
-        } else {
-            $contest = Contest::create([
-                'event_id' => $this->event_id,
-                'name' => $this->name,
-                'status' => $this->status,
-            ]);
-
-            $contest->jurors()->sync($this->selectedJurors);
-
-            foreach ($this->criteria as $criterionData) {
-                $contest->evaluationCriteria()->create($criterionData);
-            }
-
-            $this->dispatch('notify', 'Concurso criado com sucesso!');
-        }
-
+        $this->dispatch('notify', $result['success']);
         $this->showModal = false;
     }
 

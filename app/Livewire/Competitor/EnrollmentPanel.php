@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Competitor;
 
+use App\Livewire\Forms\EnrollmentForm;
+use App\Livewire\Forms\DocumentUploadForm;
 use App\Models\Contest;
 use App\Models\Presentation;
 use App\Services\DocumentService;
@@ -14,42 +16,18 @@ class EnrollmentPanel extends Component
 {
     use WithFileUploads;
 
-    public $contest_id;
-    public $work_title;
-    public $document_file;
-    public $document_type;
-
-    protected $rules = [
-        'contest_id' => 'required|exists:contests,id',
-        'work_title' => 'required|string|max:255',
-    ];
+    public EnrollmentForm $enrollmentForm;
+    public DocumentUploadForm $uploadForm;
 
     public function enroll()
     {
-        $this->validate([
-            'contest_id' => 'required|exists:contests,id',
-            'work_title' => 'required|string|max:255',
-        ]);
-
-        PresentationService::run([
-            'contest_id' => $this->contest_id,
-            'work_title' => $this->work_title,
-        ]);
-
-        $this->reset(['contest_id', 'work_title']);
+        $this->enrollmentForm->enroll();
         session()->flash('message', 'Inscrição realizada com sucesso!');
     }
 
     public function uploadDocument()
     {
-        $this->validate([
-            'document_file' => 'required|file|mimes:pdf,png,jpg,jpeg|max:5120',
-            'document_type' => 'required|string|max:255',
-        ]);
-
-        DocumentService::run(Auth::user(), $this->document_file, $this->document_type);
-
-        $this->reset(['document_file', 'document_type']);
+        $this->uploadForm->upload();
         session()->flash('message', 'Documento enviado com sucesso!');
     }
 

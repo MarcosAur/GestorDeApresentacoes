@@ -79,20 +79,20 @@
                 <form wire:submit.prevent="save" class="space-y-6">
                     <div>
                         <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Nome do Evento</label>
-                        <input wire:model="name" type="text" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
-                        @error('name') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                        <input wire:model="form.name" type="text" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                        @error('form.name') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Data do Evento</label>
-                        <input wire:model="event_date" type="date" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
-                        @error('event_date') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                        <input wire:model="form.event_date" type="date" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                        @error('form.event_date') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Descrição</label>
-                        <textarea wire:model="description" rows="4" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none"></textarea>
-                        @error('description') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                        <textarea wire:model="form.description" rows="4" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none"></textarea>
+                        @error('form.description') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="pt-4 flex items-center justify-end space-x-4">

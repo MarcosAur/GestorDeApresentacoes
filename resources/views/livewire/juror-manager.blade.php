@@ -85,20 +85,20 @@
                     <div class="grid grid-cols-2 gap-6">
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Nome Completo</label>
-                            <input wire:model="name" type="text" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
-                            @error('name') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                            <input wire:model="form.name" type="text" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                            @error('form.name') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">E-mail</label>
-                            <input wire:model="email" type="email" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
-                            @error('email') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                            <input wire:model="form.email" type="email" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                            @error('form.email') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="col-span-2">
                             <label class="block text-xs font-admin font-bold text-white/40 uppercase tracking-widest mb-2">Senha {{ $editingJuror ? '(Deixe em branco para não alterar)' : '' }}</label>
-                            <input wire:model="password" type="password" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
-                            @error('password') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                            <input wire:model="form.password" type="password" class="w-full bg-surface-container-highest border-none rounded-lg p-3 text-white focus:ring-2 focus:ring-primary transition-all outline-none">
+                            @error('form.password') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -107,7 +107,7 @@
                         <div class="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2">
                             @foreach($contests as $contest)
                                 <label class="flex items-center space-x-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/5 cursor-pointer hover:bg-surface-container-high transition-colors">
-                                    <input type="checkbox" wire:model="selectedContests" value="{{ $contest->id }}" class="w-5 h-5 rounded border-outline-variant bg-surface-container-highest text-primary focus:ring-primary">
+                                    <input type="checkbox" wire:model="form.selectedContests" value="{{ $contest->id }}" class="w-5 h-5 rounded border-outline-variant bg-surface-container-highest text-primary focus:ring-primary">
                                     <div class="flex flex-col">
                                         <span class="text-xs font-bold text-white">{{ $contest->name }}</span>
                                         <span class="text-[10px] text-white/40">{{ $contest->event->name }}</span>
@@ -115,7 +115,7 @@
                                 </label>
                             @endforeach
                         </div>
-                        @error('selectedContests') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
+                        @error('form.selectedContests') <span class="text-error text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="pt-4 flex items-center justify-end space-x-4">

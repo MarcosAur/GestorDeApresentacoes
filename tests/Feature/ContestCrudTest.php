@@ -41,9 +41,9 @@ class ContestCrudTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(\App\Livewire\ContestManager::class)
-            ->set('event_id', $this->event->id)
-            ->set('name', 'Concurso K-Pop')
-            ->set('criteria', [
+            ->set('form.event_id', $this->event->id)
+            ->set('form.name', 'Concurso K-Pop')
+            ->set('form.criteria', [
                 ['name' => 'Originalidade', 'max_score' => 10, 'weight' => 2, 'tiebreak_priority' => 1]
             ])
             ->call('save');
@@ -71,7 +71,7 @@ class ContestCrudTest extends TestCase
 
         Livewire::test(\App\Livewire\ContestManager::class)
             ->call('openModal', $contest->id)
-            ->set('criteria.0.name', 'Critério Editado')
+            ->set('form.criteria.0.name', 'Critério Editado')
             ->call('save');
 
         $this->assertEquals('Critério Editado', $contest->fresh()->evaluationCriteria->first()->name);
@@ -82,9 +82,9 @@ class ContestCrudTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(\App\Livewire\ContestManager::class)
-            ->set('event_id', $this->event->id)
-            ->set('name', 'Concurso K-Pop')
-            ->set('criteria', [
+            ->set('form.event_id', $this->event->id)
+            ->set('form.name', 'Concurso K-Pop')
+            ->set('form.criteria', [
                 ['name' => 'Critério 1', 'max_score' => 10, 'weight' => 1, 'tiebreak_priority' => 1],
                 ['name' => 'Critério 2', 'max_score' => 10, 'weight' => 1, 'tiebreak_priority' => 1]
             ])

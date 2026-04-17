@@ -12,19 +12,19 @@
             <form wire:submit.prevent="enroll" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium mb-1">Concurso</label>
-                    <select wire:model="contest_id" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
+                    <select wire:model="enrollmentForm.contest_id" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
                         <option value="">Selecione um concurso</option>
                         @foreach($contests as $contest)
                             <option value="{{ $contest->id }}">{{ $contest->name }}</option>
                         @endforeach
                     </select>
-                    @error('contest_id') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                    @error('enrollmentForm.contest_id') <span class="text-error text-xs">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Título do Trabalho</label>
-                    <input type="text" wire:model="work_title" placeholder="Ex: Cosplay de Naruto" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
-                    @error('work_title') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                    <input type="text" wire:model="enrollmentForm.work_title" placeholder="Ex: Cosplay de Naruto" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
+                    @error('enrollmentForm.work_title') <span class="text-error text-xs">{{ $message }}</span> @enderror
                 </div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-primary to-primary-container p-3 rounded-lg font-bold text-surface shadow-lg hover:opacity-90 transition-opacity">
@@ -39,17 +39,17 @@
             <form wire:submit.prevent="uploadDocument" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium mb-1">Tipo de Documento</label>
-                    <input type="text" wire:model="document_type" placeholder="Ex: Termo de Responsabilidade" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
-                    @error('document_type') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                    <input type="text" wire:model="uploadForm.document_type" placeholder="Ex: Termo de Responsabilidade" class="w-full bg-surface-container-highest border-none rounded-lg p-3 focus:ring-2 focus:ring-primary">
+                    @error('uploadForm.document_type') <span class="text-error text-xs">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Arquivo (PDF, PNG, JPG)</label>
-                    <input type="file" wire:model="document_file" class="w-full bg-surface-container-highest border-none rounded-lg p-2 file:bg-surface-container-highest file:text-white file:border-none file:px-4 file:py-2 file:rounded-lg file:mr-4">
-                    @error('document_file') <span class="text-error text-xs">{{ $message }}</span> @enderror
+                    <input type="file" wire:model="uploadForm.document_file" class="w-full bg-surface-container-highest border-none rounded-lg p-2 file:bg-surface-container-highest file:text-white file:border-none file:px-4 file:py-2 file:rounded-lg file:mr-4">
+                    @error('uploadForm.document_file') <span class="text-error text-xs">{{ $message }}</span> @enderror
                 </div>
 
-                <div wire:loading wire:target="document_file" class="text-primary text-xs">Enviando arquivo...</div>
+                <div wire:loading wire:target="uploadForm.document_file" class="text-primary text-xs">Enviando arquivo...</div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-secondary to-primary p-3 rounded-lg font-bold text-surface shadow-lg hover:opacity-90 transition-opacity">
                     Enviar Documento

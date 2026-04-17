@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Forms\EventForm;
 use App\Models\Event;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -11,29 +12,18 @@ class EventList extends Component
 {
     use WithPagination;
 
+    public EventForm $form;
     public $showModal = false;
     public $editingEvent = null;
-
-    public $name;
-    public $event_date;
-    public $description;
-
-    protected $rules = [
-        'name' => 'required|string|max:255',
-        'event_date' => 'required|date',
-        'description' => 'nullable|string',
-    ];
 
     public function openModal($eventId = null)
     {
         $this->resetValidation();
-        $this->reset(['name', 'event_date', 'description']);
+        $this->form->reset();
 
         if ($eventId) {
             $this->editingEvent = Event::findOrFail($eventId);
-            $this->name = $this->editingEvent->name;
-            $this->event_date = $this->editingEvent->event_date;
-            $this->description = $this->editingEvent->description;
+            $this->form->setEvent($this->editingEvent);
         } else {
             $this->editingEvent = null;
         }
@@ -43,25 +33,8 @@ class EventList extends Component
 
     public function save()
     {
-        $this->validate();
-
-        if ($this->editingEvent) {
-            $this->editingEvent->update([
-                'name' => $this->name,
-                'event_date' => $this->event_date,
-                'description' => $this->description,
-            ]);
-            $this->dispatch('notify', 'Evento atualizado com sucesso!');
-        } else {
-            Event::create([
-                'admin_id' => Auth::id(),
-                'name' => $this->name,
-                'event_date' => $this->event_date,
-                'description' => $this->description,
-            ]);
-            $this->dispatch('notify', 'Evento criado com sucesso!');
-        }
-
+        $message = $this->form->save();
+        $this->dispatch('notify', $message);
         $this->showModal = false;
     }
 
