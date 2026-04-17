@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserDocument;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DocumentService
 {
@@ -19,8 +20,12 @@ class DocumentService
      */
     public static function run(User $user, UploadedFile $file, string $type): UserDocument
     {
-        $path = "documents/{$user->id}/" . $file->hashName();
-        Storage::disk('s3')->put($path, file_get_contents($file));
+        $sanitizedType = Str::slug($type);
+        $datetime = now()->format('Ymd_His');
+        $extension = $file->extension();
+
+        $path = "documents/{$user->id}/{$sanitizedType}_{$datetime}.{$extension}";
+        Storage::disk('s3')->put($path, $file->getContent());
 
         return UserDocument::create([
             'user_id' => $user->id,

@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
         $this->command->info('--------------------------------------------');
 
         foreach ($roles as $role) {
-            $password = Str::random(12);
+            $password = '12345678';
             $email = strtolower($role->slug) . '@example.com';
             
             $user = User::create([

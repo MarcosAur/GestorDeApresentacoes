@@ -26,7 +26,10 @@ class EnrollmentPanel extends Component
 
     public function enroll()
     {
-        $this->validate();
+        $this->validate([
+            'contest_id' => 'required|exists:contests,id',
+            'work_title' => 'required|string|max:255',
+        ]);
 
         PresentationService::run([
             'contest_id' => $this->contest_id,
@@ -52,8 +55,14 @@ class EnrollmentPanel extends Component
 
     public function render()
     {
+        $contests = Contest::where('status', 'AGENDADO')
+            ->whereDoesntHave('presentations', function ($query) {
+                $query->where('competitor_id', Auth::id())
+                ->whereNull('deleted_at');
+            })->get();
+
         return view('livewire.competitor.enrollment-panel', [
-            'contests' => Contest::where('status', 'AGENDADO')->get(),
+            'contests' => $contests,
             'presentations' => Auth::user()->presentations()->with('contest')->get(),
             'documents' => Auth::user()->documents()->get(),
         ]);
