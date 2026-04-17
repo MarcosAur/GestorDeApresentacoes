@@ -68,6 +68,7 @@
                         <th class="p-4">Concurso</th>
                         <th class="p-4">Trabalho</th>
                         <th class="p-4">Status</th>
+                        <th class="p-4 text-center">Check-in (QR Code)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-outline-variant/10">
@@ -84,6 +85,21 @@
                                     <span class="px-3 py-1 bg-yellow-500/10 text-yellow-500 rounded-full text-xs font-bold border border-yellow-500/20">EM ANÁLISE</span>
                                 @endif
                             </td>
+                            @if ($presentation->status === 'APTO')
+                                <td class="p-4 text-center">
+                                    @if($presentation->qr_code_hash)
+                                        <div class="inline-block p-2 bg-white rounded-lg shadow-sm mb-1">
+                                            {!! QrCode::size(80)->generate($presentation->qr_code_hash) !!}
+                                        </div>
+                                        <p class="text-[10px] text-outline-variant">Apresente no evento</p>
+                                    @else
+                                        <span class="text-xs text-outline-variant">-</span>
+                                    @endif
+                                </td>
+                            @else
+                                <td class="p-4 text-center">Check-in indisponivel. Checar status da inscrição</td>
+                            @endif
+                            
                         </tr>
                     @endforeach
                 </tbody>

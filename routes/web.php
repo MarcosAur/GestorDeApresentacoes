@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/contests', \App\Livewire\ContestManager::class)->name('contests.index');
         Route::get('/jurors', \App\Livewire\JurorManager::class)->name('jurors.index');
         Route::get('/analyzer', \App\Livewire\Admin\PresentationAnalyzer::class)->name('admin.analyzer');
+        Route::get('/checkin', \App\Livewire\Admin\CheckinScanner::class)->name('admin.checkin');
     });
 
     // Competitor only routes

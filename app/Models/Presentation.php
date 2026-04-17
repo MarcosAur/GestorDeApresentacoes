@@ -22,6 +22,10 @@ class Presentation extends Model
         'presentation_order',
     ];
 
+    protected $casts = [
+        'checkin_realizado' => 'boolean',
+    ];
+
     public function contest()
     {
         return $this->belongsTo(Contest::class);

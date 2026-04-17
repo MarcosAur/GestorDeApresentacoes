@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Presentation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PresentationService
 {
@@ -20,6 +21,7 @@ class PresentationService
             'competitor_id' => Auth::id(),
             'work_title' => $validatedData['work_title'],
             'status' => 'EM_ANALISE',
+            'qr_code_hash' => (string) Str::uuid(),
         ]);
     }
 
