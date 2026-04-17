@@ -88,9 +88,8 @@ class CheckinTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(\App\Livewire\Admin\CheckinScanner::class)
-            ->call('processCheckin', 'invalid-hash');
-
-        $this->assertTrue(session()->has('error'));
+            ->call('processCheckin', 'invalid-hash')
+            ->assertSee('QR Code inválido ou não encontrado.');
     }
 
     public function test_checkin_fails_if_already_performed(): void
@@ -111,8 +110,7 @@ class CheckinTest extends TestCase
         $this->actingAs($this->admin);
 
         Livewire::test(\App\Livewire\Admin\CheckinScanner::class)
-            ->call('processCheckin', 'test-hash-123');
-
-        $this->assertTrue(session()->has('warning'));
+            ->call('processCheckin', 'test-hash-123')
+            ->assertSee('Check-in já realizado para:');
     }
 }

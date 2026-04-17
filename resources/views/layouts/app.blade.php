@@ -83,6 +83,15 @@
                     <span x-show="sidebarOpen" class="{{ !request()->routeIs('competitor.enrollment') ? 'group-hover:text-primary' : '' }}">Inscrições</span>
                 </a>
                 @endif
+
+                @if(auth()->user()->hasRole('jurado'))
+                <a href="{{ route('contests.index') }}" class="flex items-center space-x-3 p-3 rounded-lg {{ request()->routeIs('contests.*') ? 'bg-surface-container-high text-primary' : 'hover:bg-surface-container-high transition-colors group' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 {{ request()->routeIs('contests.*') ? 'text-primary' : 'text-secondary' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                    <span x-show="sidebarOpen" class="{{ !request()->routeIs('contests.*') ? 'group-hover:text-primary' : '' }}">Concursos</span>
+                </a>
+                @endif
                 <!-- Add other links here -->
             </nav>
         </aside>

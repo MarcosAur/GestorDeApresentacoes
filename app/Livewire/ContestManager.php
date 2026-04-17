@@ -20,6 +20,10 @@ class ContestManager extends Component
 
     public function openModal($contestId = null)
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return;
+        }
+
         $this->resetValidation();
         $this->form->reset();
 
@@ -35,16 +39,28 @@ class ContestManager extends Component
 
     public function addCriterion()
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return;
+        }
+
         $this->form->addCriterion();
     }
 
     public function removeCriterion($index)
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return;
+        }
+
         $this->form->removeCriterion($index);
     }
 
     public function save()
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return;
+        }
+
         $result = $this->form->save();
 
         if (isset($result['error'])) {
@@ -58,6 +74,10 @@ class ContestManager extends Component
 
     public function delete($contestId)
     {
+        if (!auth()->user()->hasRole('admin')) {
+            return;
+        }
+
         $contest = Contest::findOrFail($contestId);
         $contest->delete();
         $this->dispatch('notify', 'Concurso removido!');
@@ -65,8 +85,16 @@ class ContestManager extends Component
 
     public function render()
     {
+        $query = Contest::with(['event', 'jurors'])->latest();
+
+        if (auth()->user()->hasRole('jurado') && !auth()->user()->hasRole('admin')) {
+            $query->whereHas('jurors', function($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+
         return view('livewire.contest-manager', [
-            'contests' => Contest::with(['event', 'jurors'])->latest()->paginate(10),
+            'contests' => $query->paginate(10),
             'events' => Event::orderBy('name')->get(),
             'availableJurors' => User::whereHas('role', function($q) { $q->where('slug', 'jurado'); })->orderBy('name')->get()
         ]);

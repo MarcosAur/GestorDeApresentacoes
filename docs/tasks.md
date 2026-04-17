@@ -28,27 +28,27 @@ Foco na jornada do competidor e análise administrativa.
   * **Análise Administrativa:** Tela para o Admin visualizar dados da apresentação + documentos e aprovar/reprovar com justificativa. [OK]
   * **Service Layer:** Criar DocumentService e PresentationService seguindo o padrão estático run(). [OK]
 
-## Task 4: Credenciamento e Real-Time (Core)
+## [x] Task 4: Credenciamento e Real-Time (Core) (Concluída)
 
 Implementação da dinâmica de palco e WebSockets.
 
-  * **QR Code System:** Gerar qr\_code\_hash e disponibilizar visualização na tela do competidor.
-  * **Check-in:** Funcionalidade de leitura para mudar status para checkin\_realizado.
-  * **Setup Real-Time:** Configurar Laravel Reverb e disparar o evento ApresentacaoAlterada.
+  * **QR Code System:** Gerar qr\_code\_hash e disponibilizar visualização na tela do competidor. [OK]
+  * **Check-in:** Funcionalidade de leitura para mudar status para checkin\_realizado. [OK]
+  * **Setup Real-Time:** Configurar Laravel Reverb e disparar o evento ApresentacaoAlterada. [OK]
   * **Sincronização de Telas (Livewire):**
-      * **Público:** Tela que re-renderiza ao detectar nova apresentacao\_atual\_id.
-      * **Jurados:** Reset automático do formulário de notas ao mudar competidor no palco.
+      * **Público:** Tela que re-renderiza ao detectar nova apresentacao\_atual\_id. [OK]
+      * **Jurados:** Reset automático do formulário de notas ao mudar competidor no palco. [OK]
 
-## Task 5: Avaliação e Ranking Ponderado
+## [x] Task 5: Avaliação e Ranking Ponderado (Concluída)
 
 Lógica complexa de notas e critérios de desempate.
 
-  * **Lançamento de Notas:** Tela do jurado com formulário reativo baseado nos critérios do concurso.
-  * **Validação de Notas:** Implementar Form Requests para garantir que a nota não exceda o limite definido no barema.
+  * **Lançamento de Notas:** Tela do jurado com formulário reativo baseado nos critérios do concurso. [OK]
+  * **Validação de Notas:** Implementar Form Requests para garantir que a nota não exceda o limite definido no barema. [OK]
   * **PontuacaoService:**
-      * Cálculo em tempo real de notas ponderadas (Soma de Nota × Peso).
-      * Algoritmo de desempate por prioridade de critério.
-  * **Controle de Palco:** Admin seleciona próxima apresentação e encerra a atual (Validando se todos os jurados votaram ).
+      * Cálculo em tempo real de notas ponderadas (Soma de Nota × Peso). [OK]
+      * Algoritmo de desempate por prioridade de critério. [OK]
+  * **Controle de Palco:** Admin seleciona próxima apresentação e encerra a atual (Validando se todos os jurados votaram ). [OK]
 
 ## Task 6: Consolidação e Resultados
 

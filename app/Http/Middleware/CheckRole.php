@@ -34,7 +34,7 @@ class CheckRole
         }
 
         // Additional check for Jurors and contests if contest_id is in the request
-        if ($user->hasRole('jurado') && $request->route('contest')) {
+        if ($user->hasRole('jurado') && ($request->route('evaluate'))) {
             $contestId = $request->route('contest');
             if (!$user->contests()->where('contest_id', $contestId)->exists()) {
                 return response()->json(['message' => 'Forbidden: You are not a juror for this contest'], 403);
