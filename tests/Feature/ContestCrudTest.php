@@ -7,7 +7,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Contest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class ContestCrudTest extends TestCase
@@ -40,14 +39,16 @@ class ContestCrudTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\ContestManager::class)
-            ->set('form.event_id', $this->event->id)
-            ->set('form.name', 'Concurso K-Pop')
-            ->set('form.criteria', [
+        $response = $this->postJson('/api/contests', [
+            'event_id' => $this->event->id,
+            'name' => 'Concurso K-Pop',
+            'status' => 'AGENDADO',
+            'criteria' => [
                 ['name' => 'Originalidade', 'max_score' => 10, 'weight' => 2, 'tiebreak_priority' => 1]
-            ])
-            ->call('save');
+            ]
+        ]);
 
+        $response->assertStatus(201);
         $contest = Contest::where('name', 'Concurso K-Pop')->first();
         $this->assertNotNull($contest);
         $this->assertCount(1, $contest->evaluationCriteria);
@@ -69,11 +70,16 @@ class ContestCrudTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\ContestManager::class)
-            ->call('openModal', $contest->id)
-            ->set('form.criteria.0.name', 'Critério Editado')
-            ->call('save');
+        $response = $this->putJson("/api/contests/{$contest->id}", [
+            'event_id' => $this->event->id,
+            'name' => 'Concurso Atualizado',
+            'status' => 'AGENDADO',
+            'criteria' => [
+                ['name' => 'Critério Editado', 'max_score' => 10, 'weight' => 1]
+            ]
+        ]);
 
+        $response->assertStatus(200);
         $this->assertEquals('Critério Editado', $contest->fresh()->evaluationCriteria->first()->name);
     }
 
@@ -81,14 +87,17 @@ class ContestCrudTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\ContestManager::class)
-            ->set('form.event_id', $this->event->id)
-            ->set('form.name', 'Concurso K-Pop')
-            ->set('form.criteria', [
+        $response = $this->postJson('/api/contests', [
+            'event_id' => $this->event->id,
+            'name' => 'Concurso K-Pop',
+            'status' => 'AGENDADO',
+            'criteria' => [
                 ['name' => 'Critério 1', 'max_score' => 10, 'weight' => 1, 'tiebreak_priority' => 1],
                 ['name' => 'Critério 2', 'max_score' => 10, 'weight' => 1, 'tiebreak_priority' => 1]
-            ])
-            ->call('save')
-            ->assertHasErrors(['criteria_tiebreak']);
+            ]
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('criteria');
     }
 }

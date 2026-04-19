@@ -35,4 +35,9 @@ class Presentation extends Model
     {
         return $this->belongsTo(User::class, 'competitor_id');
     }
+
+    public function scores()
+    {
+        return $this->hasMany(PresentationScore::class);
+    }
 }

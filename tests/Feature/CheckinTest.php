@@ -8,7 +8,6 @@ use App\Models\Presentation;
 use App\Models\User;
 use App\Services\PresentationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class CheckinTest extends TestCase
@@ -59,7 +58,7 @@ class CheckinTest extends TestCase
         $this->assertNotEmpty($presentation->qr_code_hash);
     }
 
-    public function test_admin_can_perform_checkin_via_livewire(): void
+    public function test_admin_can_perform_checkin_via_api(): void
     {
         $competitor = User::factory()->create([
             'role_id' => \App\Models\Role::where('slug', 'competidor')->first()->id
@@ -75,11 +74,11 @@ class CheckinTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\Admin\CheckinScanner::class)
-            ->set('manualHash', 'test-hash-123')
-            ->call('processCheckin', 'test-hash-123')
-            ->assertHasNoErrors();
+        $response = $this->postJson('/api/checkin', [
+            'hash' => 'test-hash-123'
+        ]);
 
+        $response->assertStatus(200);
         $this->assertTrue($presentation->fresh()->checkin_realizado, 'Check-in should be marked as realized in the database');
     }
 
@@ -87,9 +86,12 @@ class CheckinTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\Admin\CheckinScanner::class)
-            ->call('processCheckin', 'invalid-hash')
-            ->assertSee('QR Code inválido ou não encontrado.');
+        $response = $this->postJson('/api/checkin', [
+            'hash' => 'invalid-hash'
+        ]);
+
+        $response->assertStatus(404);
+        $response->assertJsonPath('message', 'QR Code inválido ou não encontrado.');
     }
 
     public function test_checkin_fails_if_already_performed(): void
@@ -109,8 +111,11 @@ class CheckinTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\Admin\CheckinScanner::class)
-            ->call('processCheckin', 'test-hash-123')
-            ->assertSee('Check-in já realizado para:');
+        $response = $this->postJson('/api/checkin', [
+            'hash' => 'test-hash-123'
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', "Check-in já realizado para: {$competitor->name}");
     }
 }

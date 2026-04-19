@@ -10,7 +10,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\PontuacaoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class EvaluationFlowTest extends TestCase
@@ -51,16 +50,13 @@ class EvaluationFlowTest extends TestCase
 
         $this->actingAs($juror);
 
-        $test = Livewire::test(\App\Livewire\Juror\EvaluationPanel::class, ['contest' => $contest])
-            ->set('scores.' . $criterion->id, 8.5)
-            ->call('submit');
-            
-        if ($test->errors()->any()) {
-            dd($test->errors());
-        }
+        $response = $this->postJson("/api/contests/{$contest->id}/evaluation", [
+            'scores' => [
+                $criterion->id => 8.5
+            ]
+        ]);
 
-        $test->assertHasNoErrors()
-            ->assertSet('hasVoted', true);
+        $response->assertStatus(200);
 
         $this->assertDatabaseHas('presentation_scores', [
             'presentation_id' => $presentation->id,
@@ -85,9 +81,12 @@ class EvaluationFlowTest extends TestCase
 
         $this->actingAs($admin);
 
-        Livewire::test(\App\Livewire\Admin\StageController::class, ['contest' => $contest])
-            ->call('setOnStage', $p2->id)
-            ->assertDispatched('notify', 'Aguardando votos de todos os jurados para trocar.');
+        $response = $this->postJson("/api/contests/{$contest->id}/stage", [
+            'presentation_id' => $p2->id
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'Aguardando votos de todos os jurados para trocar.');
 
         $this->assertEquals($p1->id, $contest->fresh()->current_presentation_id);
     }

@@ -5,6 +5,22 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-19
+
+### Adicionado
+- **SPA com Vue 3**: Migração completa do frontend para Single Page Application utilizando Vue 3 (Composition API), Vue Router e Pinia.
+- **API RESTful**: Implementação de controllers de API para todos os módulos (Auth, Eventos, Concursos, Jurados, Inscrições, Controle de Palco).
+- **Real-time com Laravel Reverb**: Integração do Laravel Echo + Reverb na SPA Vue para sincronização instantânea do palco entre Admin, Jurados e Público.
+- **Painel de Avaliação (Vue)**: Novo formulário de notas para jurados com sliders interativos e reset automático via WebSockets.
+- **Controle de Palco (Vue)**: Painel administrativo para gestão de apresentações em tempo real com feed de atividade ao vivo.
+- **Check-in via QR Code (Vue)**: Integração da biblioteca `html5-qrcode` para scanner direto no navegador com fallback para entrada manual.
+- **Identidade Visual**: Portabilidade fiel do Design System "Editorial Elétrico" para componentes Vue (SFC), mantendo neons e glassmorphism.
+
+### Alterado
+- **Arquitetura**: Transição de Livewire/Blade para SPA + API REST, desacoplando completamente o estado do frontend.
+- **Autenticação**: Migração para Laravel Sanctum com suporte a cookies stateful para SPA.
+- **Roteamento**: Centralização do fluxo de navegação no Vue Router com guards de proteção por papel (Admin/Jurado/Competidor).
+
 ## [0.1.0] - 2026-04-15
 
 ### Adicionado

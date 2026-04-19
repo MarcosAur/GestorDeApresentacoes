@@ -7,7 +7,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Contest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class JurorCrudTest extends TestCase
@@ -45,13 +44,14 @@ class JurorCrudTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\JurorManager::class)
-            ->set('form.name', 'Jurado K-Pop')
-            ->set('form.email', 'jurado@test.com')
-            ->set('form.password', 'password123')
-            ->set('form.selectedContests', [$this->contest->id])
-            ->call('save');
+        $response = $this->postJson('/api/jurors', [
+            'name' => 'Jurado K-Pop',
+            'email' => 'jurado@test.com',
+            'password' => 'password123',
+            'selectedContests' => [$this->contest->id],
+        ]);
 
+        $response->assertStatus(201);
         $juror = User::where('email', 'jurado@test.com')->first();
         $this->assertNotNull($juror);
         $this->assertTrue($juror->hasRole('jurado'));
@@ -71,11 +71,13 @@ class JurorCrudTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\JurorManager::class)
-            ->call('openModal', $juror->id)
-            ->set('form.selectedContests', [$this->contest->id])
-            ->call('save');
+        $response = $this->putJson("/api/jurors/{$juror->id}", [
+            'name' => 'Jurado Atualizado',
+            'email' => 'antigo@test.com',
+            'selectedContests' => [$this->contest->id],
+        ]);
 
+        $response->assertStatus(200);
         $this->assertCount(1, $juror->fresh()->contests);
     }
 }

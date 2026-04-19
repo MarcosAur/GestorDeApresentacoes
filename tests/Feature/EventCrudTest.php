@@ -7,7 +7,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Contest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class EventCrudTest extends TestCase
@@ -33,12 +32,13 @@ class EventCrudTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\EventList::class)
-            ->set('form.name', 'Evento de Teste')
-            ->set('form.event_date', '2026-12-31')
-            ->set('form.description', 'Uma descrição teste')
-            ->call('save');
+        $response = $this->postJson('/api/events', [
+            'name' => 'Evento de Teste',
+            'event_date' => '2026-12-31',
+            'description' => 'Uma descrição teste',
+        ]);
 
+        $response->assertStatus(201);
         $this->assertTrue(Event::where('name', 'Evento de Teste')->exists());
     }
 
@@ -52,11 +52,12 @@ class EventCrudTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\EventList::class)
-            ->call('openModal', $event->id)
-            ->set('form.name', 'Evento Atualizado')
-            ->call('save');
+        $response = $this->putJson("/api/events/{$event->id}", [
+            'name' => 'Evento Atualizado',
+            'event_date' => '2026-01-01',
+        ]);
 
+        $response->assertStatus(200);
         $this->assertEquals('Evento Atualizado', $event->fresh()->name);
     }
 
@@ -75,9 +76,9 @@ class EventCrudTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\EventList::class)
-            ->call('delete', $event->id);
+        $response = $this->deleteJson("/api/events/{$event->id}");
 
+        $response->assertStatus(422);
         $this->assertTrue(Event::where('id', $event->id)->exists());
     }
 
@@ -91,9 +92,9 @@ class EventCrudTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        Livewire::test(\App\Livewire\EventList::class)
-            ->call('delete', $event->id);
+        $response = $this->deleteJson("/api/events/{$event->id}");
 
+        $response->assertStatus(200);
         $this->assertSoftDeleted($event);
     }
 }

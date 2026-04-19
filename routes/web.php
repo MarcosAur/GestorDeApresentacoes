@@ -1,47 +1,20 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\Api\DocumentController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+/**
+ * Rotas da SPA Vue.js
+ * Todas as rotas que não são da API ou de arquivos estáticos 
+ * são tratadas pelo Vue Router no frontend.
+ */
 
-// Public stage view
-Route::get('/stage/{contest}', \App\Livewire\Public\StageViewer::class)->name('public.stage');
-
+// Download de documentos (protegido por auth web para compatibilidade de links diretos)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Document download (shared check in controller)
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
-
-    // Shared Admin and Juror routes
-    Route::middleware(['role:admin,jurado'])->group(function () {
-        Route::get('/contests', \App\Livewire\ContestManager::class)->name('contests.index');
-    });
-
-    // Admin only routes
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/events', \App\Livewire\EventList::class)->name('events.index');
-        Route::get('/jurors', \App\Livewire\JurorManager::class)->name('jurors.index');
-        Route::get('/analyzer', \App\Livewire\Admin\PresentationAnalyzer::class)->name('admin.analyzer');
-        Route::get('/checkin', \App\Livewire\Admin\CheckinScanner::class)->name('admin.checkin');
-        Route::get('/stage/{contest}', \App\Livewire\Admin\StageController::class)->name('admin.stage');
-    });
-
-    // Juror only routes
-    Route::middleware(['role:jurado'])->group(function () {
-        Route::get('/evaluate/{contest}', \App\Livewire\Juror\EvaluationPanel::class)->name('juror.evaluation');
-    });
-
-    // Competitor only routes
-    Route::middleware(['role:competidor'])->group(function () {
-        Route::get('/enrollment', \App\Livewire\Competitor\EnrollmentPanel::class)->name('competitor.enrollment');
-    });
 });
+
+// Catch-all route para servir a SPA Vue em qualquer URL
+Route::get('/{any?}', function () {
+    return view('app');
+})->where('any', '^(?!api|sanctum|up).*$');

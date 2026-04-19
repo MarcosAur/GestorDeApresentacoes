@@ -31,13 +31,13 @@ class RoleAccessTest extends TestCase
         $this->assertFalse($user->hasRole('jurado'));
     }
 
-    public function test_unauthenticated_user_is_redirected_to_login(): void
+    public function test_unauthenticated_user_cannot_access_api_user(): void
     {
-        $response = $this->get('/dashboard');
-        $response->assertRedirect('/');
+        $response = $this->getJson('/api/user');
+        $response->assertStatus(401);
     }
 
-    public function test_authenticated_user_can_access_dashboard(): void
+    public function test_authenticated_user_can_access_api_user(): void
     {
         $role = Role::where('slug', 'admin')->first();
         $user = User::create([
@@ -47,7 +47,7 @@ class RoleAccessTest extends TestCase
             'role_id' => $role->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/dashboard');
+        $response = $this->actingAs($user)->getJson('/api/user');
         $response->assertStatus(200);
     }
 }

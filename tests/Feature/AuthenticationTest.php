@@ -27,12 +27,13 @@ class AuthenticationTest extends TestCase
             'role_id' => $role->id,
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->postJson('/api/login', [
             'email' => 'test@example.com',
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/dashboard');
+        $response->assertStatus(200);
+        $response->assertJsonPath('user.email', 'test@example.com');
         $this->assertAuthenticatedAs($user);
     }
 
@@ -46,12 +47,13 @@ class AuthenticationTest extends TestCase
             'role_id' => $role->id,
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->postJson('/api/login', [
             'email' => 'test@example.com',
             'password' => 'wrong-password',
         ]);
 
-        $response->assertSessionHasErrors('email');
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('email');
         $this->assertGuest();
     }
 
@@ -65,8 +67,9 @@ class AuthenticationTest extends TestCase
             'role_id' => $role->id,
         ]);
 
-        $this->actingAs($user)->post('/logout');
+        $response = $this->actingAs($user)->postJson('/api/logout');
 
+        $response->assertStatus(200);
         $this->assertGuest();
     }
 }

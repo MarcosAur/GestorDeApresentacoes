@@ -12,8 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Usando statement bruto para garantir compatibilidade com ENUM no MySQL
-        DB::statement("ALTER TABLE presentations MODIFY COLUMN status ENUM('EM_ANALISE', 'APTO', 'INAPTO', 'FINALIZADA') DEFAULT 'EM_ANALISE'");
+        if (DB::getDriverName() === 'mysql') {
+            // Usando statement bruto para garantir compatibilidade com ENUM no MySQL
+            DB::statement("ALTER TABLE presentations MODIFY COLUMN status ENUM('EM_ANALISE', 'APTO', 'INAPTO', 'FINALIZADA') DEFAULT 'EM_ANALISE'");
+        }
     }
 
     /**
@@ -21,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE presentations MODIFY COLUMN status ENUM('EM_ANALISE', 'APTO', 'INAPTO') DEFAULT 'EM_ANALISE'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE presentations MODIFY COLUMN status ENUM('EM_ANALISE', 'APTO', 'INAPTO') DEFAULT 'EM_ANALISE'");
+        }
     }
 };

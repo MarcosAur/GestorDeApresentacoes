@@ -18,31 +18,22 @@ class RegistrationTest extends TestCase
         $this->seed(\Database\Seeders\RoleSeeder::class);
     }
 
-    public function test_registration_screen_can_be_rendered(): void
+    public function test_registration_endpoint_works(): void
     {
-        $response = $this->get('/register');
-
-        $response->assertStatus(200);
-    }
-
-    public function test_new_users_can_register_as_competitor(): void
-    {
-        $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
-        $response = $this->post('/register', [
+        $response = $this->postJson('/api/register', [
             'name' => 'Test Competitor',
             'email' => 'competitor@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
 
-        $response->assertStatus(302);
-        $response->assertSessionHasNoErrors();
+        $response->assertStatus(201);
         
         $user = User::where('email', 'competitor@example.com')->first();
         $this->assertNotNull($user, 'User should be created in the database');
         $this->assertEquals('competidor', $user->role->slug);
 
         $this->assertAuthenticated();
-        $response->assertRedirect('/dashboard');
+        $response->assertJsonPath('user.email', 'competitor@example.com');
     }
 }

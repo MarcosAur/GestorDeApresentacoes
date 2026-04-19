@@ -9,7 +9,6 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event as EventFacade;
-use Livewire\Livewire;
 use Tests\TestCase;
 
 class RealTimeSyncTest extends TestCase
@@ -37,16 +36,17 @@ class RealTimeSyncTest extends TestCase
         });
     }
 
-    public function test_stage_viewer_renders_correctly()
+    public function test_public_stage_api_returns_correct_data()
     {
         $contest = Contest::factory()->create();
 
-        Livewire::test(\App\Livewire\Public\StageViewer::class, ['contest' => $contest])
-            ->assertStatus(200)
-            ->assertSet('contest.id', $contest->id);
+        $response = $this->getJson("/api/public/contests/{$contest->id}/stage");
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('contest.id', $contest->id);
     }
 
-    public function test_juror_evaluation_panel_renders_correctly()
+    public function test_juror_evaluation_api_returns_correct_data()
     {
         $juror = User::factory()->create([
             'role_id' => Role::where('slug', 'jurado')->first()->id
@@ -57,8 +57,9 @@ class RealTimeSyncTest extends TestCase
 
         $this->actingAs($juror);
 
-        Livewire::test(\App\Livewire\Juror\EvaluationPanel::class, ['contest' => $contest])
-            ->assertStatus(200)
-            ->assertSet('contest.id', $contest->id);
+        $response = $this->getJson("/api/contests/{$contest->id}/evaluation");
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('contest.id', $contest->id);
     }
 }

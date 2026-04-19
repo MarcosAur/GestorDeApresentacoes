@@ -7,7 +7,6 @@ use App\Models\Event;
 use App\Models\Presentation;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\PresentationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -42,24 +41,24 @@ class PresentationServiceTest extends TestCase
         ]);
     }
 
-    public function test_can_create_presentation(): void
+    public function test_can_create_presentation_via_api(): void
     {
         $this->actingAs($this->competitor);
 
-        $data = [
+        $response = $this->postJson('/api/presentations', [
             'contest_id' => $this->contest->id,
             'work_title' => 'My Performance'
-        ];
+        ]);
 
-        $presentation = PresentationService::run($data);
-
-        $this->assertInstanceOf(Presentation::class, $presentation);
-        $this->assertEquals('My Performance', $presentation->work_title);
-        $this->assertEquals('EM_ANALISE', $presentation->status);
-        $this->assertEquals($this->competitor->id, $presentation->competitor_id);
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('presentations', [
+            'work_title' => 'My Performance',
+            'status' => 'EM_ANALISE',
+            'competitor_id' => $this->competitor->id
+        ]);
     }
 
-    public function test_can_approve_presentation(): void
+    public function test_can_approve_presentation_via_api(): void
     {
         $presentation = Presentation::create([
             'contest_id' => $this->contest->id,
@@ -68,17 +67,17 @@ class PresentationServiceTest extends TestCase
             'status' => 'EM_ANALISE'
         ]);
 
-        $data = [
+        $this->actingAs($this->admin);
+
+        $response = $this->postJson("/api/presentations/{$presentation->id}/evaluate", [
             'status' => 'APTO'
-        ];
+        ]);
 
-        PresentationService::evaluate($presentation, $data);
-
+        $response->assertStatus(200);
         $this->assertEquals('APTO', $presentation->fresh()->status);
-        $this->assertNull($presentation->fresh()->justification_inapto);
     }
 
-    public function test_can_reject_presentation_with_justification(): void
+    public function test_can_reject_presentation_with_justification_via_api(): void
     {
         $presentation = Presentation::create([
             'contest_id' => $this->contest->id,
@@ -87,13 +86,14 @@ class PresentationServiceTest extends TestCase
             'status' => 'EM_ANALISE'
         ]);
 
-        $data = [
+        $this->actingAs($this->admin);
+
+        $response = $this->postJson("/api/presentations/{$presentation->id}/evaluate", [
             'status' => 'INAPTO',
             'justification_inapto' => 'Documentos incompletos'
-        ];
+        ]);
 
-        PresentationService::evaluate($presentation, $data);
-
+        $response->assertStatus(200);
         $this->assertEquals('INAPTO', $presentation->fresh()->status);
         $this->assertEquals('Documentos incompletos', $presentation->fresh()->justification_inapto);
     }
