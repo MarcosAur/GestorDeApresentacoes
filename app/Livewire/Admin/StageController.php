@@ -8,6 +8,7 @@ use App\Events\ApresentacaoAlterada;
 use App\Services\PontuacaoService;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 
 #[Layout('layouts.app')]
 class StageController extends Component
@@ -23,11 +24,16 @@ class StageController extends Component
         $this->loadVotedJurors();
     }
 
+    #[On('echo:concurso.{contest.id},NotaAtribuida')]
+    public function handleNotaAtribuida()
+    {
+        $this->loadVotedJurors();
+    }
+
     public function loadPresentations()
     {
         $this->presentations = Presentation::where('contest_id', $this->contest->id)
             ->where('status', 'APTO')
-            ->where('checkin_realizado', true)
             ->with('competitor')
             ->get();
     }
@@ -55,6 +61,12 @@ class StageController extends Component
             return;
         }
 
+        // Finalizar a apresentação anterior
+        if ($this->contest->current_presentation_id) {
+            Presentation::where('id', $this->contest->current_presentation_id)
+                ->update(['status' => 'FINALIZADA']);
+        }
+
         $this->contest->current_presentation_id = $presentationId;
         
         if ($this->contest->status === 'AGENDADO') {
@@ -65,6 +77,7 @@ class StageController extends Component
 
         broadcast(new ApresentacaoAlterada($this->contest->id, $presentationId))->toOthers();
         
+        $this->loadPresentations();
         $this->loadVotedJurors();
         $this->dispatch('notify', 'Palco atualizado!');
     }
@@ -74,6 +87,12 @@ class StageController extends Component
         if ($this->contest->current_presentation_id && !PontuacaoService::checkAllJurorsVoted($this->contest)) {
             $this->dispatch('notify', 'Aguardando votos finais dos jurados.');
             return;
+        }
+
+        // Finalizar a última apresentação
+        if ($this->contest->current_presentation_id) {
+            Presentation::where('id', $this->contest->current_presentation_id)
+                ->update(['status' => 'FINALIZADA']);
         }
 
         $this->contest->status = 'FINALIZADO';

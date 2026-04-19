@@ -40,6 +40,8 @@ class PontuacaoService
                     'assigned_score' => $score,
                 ]);
             }
+
+            broadcast(new \App\Events\NotaAtribuida($contest->id))->toOthers();
         });
     }
 

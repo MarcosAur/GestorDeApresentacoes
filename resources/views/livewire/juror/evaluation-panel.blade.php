@@ -45,21 +45,22 @@
                                     <div class="flex justify-between items-center mb-3">
                                         <label class="text-white font-medium">{{ $criterion->name }}</label>
                                         <div class="flex items-center space-x-2">
-                                            <span class="text-xl font-bold text-primary">{{ $scores[$criterion->id] ?? 0 }}</span>
-                                            <span class="text-xs font-bold text-secondary uppercase bg-secondary/10 px-2 py-1 rounded">Peso {{ $criterion->weight }}x</span>
+                                            <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Peso {{ $criterion->weight }}x</span>
                                         </div>
                                     </div>
                                     
-                                    <input type="range" min="0" max="{{ $criterion->max_score }}" step="0.5" 
-                                           class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary disabled:opacity-30 disabled:cursor-not-allowed"
-                                           wire:model.live="scores.{{ $criterion->id }}"
-                                           {{ $hasVoted ? 'disabled' : '' }}>
-                                    
-                                    <div class="flex justify-between mt-2 text-[10px] text-white/30 uppercase font-bold tracking-tighter">
-                                        <span>0</span>
-                                        <span>Máximo: {{ $criterion->max_score }}</span>
+                                    <div class="relative">
+                                        <input type="number" step="0.1" min="0" max="{{ $criterion->max_score }}" 
+                                               class="w-full bg-surface-container-highest border border-outline-variant/20 rounded-xl py-4 px-6 text-2xl font-bold text-primary focus:ring-2 focus:ring-primary transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                               wire:model.live="scores.{{ $criterion->id }}"
+                                               {{ $hasVoted ? 'disabled' : '' }}
+                                               placeholder="0.0">
+                                        <div class="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 font-bold uppercase text-[10px] tracking-widest">
+                                            Máx: {{ $criterion->max_score }}
+                                        </div>
                                     </div>
-                                    @error("scores.{$criterion->id}") <p class="text-error text-[10px] mt-1 font-bold uppercase">{{ $message }}</p> @enderror
+                                    
+                                    @error("scores.{$criterion->id}") <p class="text-error text-[10px] mt-2 font-bold uppercase tracking-tighter">{{ $message }}</p> @enderror
                                 </div>
                             @endforeach
 
@@ -84,8 +85,17 @@
                         </form>
                     @else
                         <div class="flex flex-col items-center justify-center py-20 text-center">
-                            <div class="w-16 h-16 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin mb-6"></div>
-                            <p class="text-white/40 font-body">Sincronizando com o palco...</p>
+                            @if($contest->status === 'FINALIZADO')
+                                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 border border-primary/20 shadow-[0_0_20px_rgba(237,134,255,0.2)]">
+                                    <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                                <h3 class="font-display text-2xl text-white uppercase italic tracking-tighter mb-2">Concurso Encerrado</h3>
+                                <p class="text-white/40 font-body max-w-xs mx-auto">Obrigado pela sua contribuição! As notas foram consolidadas.</p>
+                                <a href="{{ route('contests.index') }}" class="mt-8 text-primary text-xs font-bold uppercase tracking-widest hover:underline">Voltar aos Concursos</a>
+                            @else
+                                <div class="w-16 h-16 border-4 border-secondary/20 border-t-secondary rounded-full animate-spin mb-6"></div>
+                                <p class="text-white/40 font-body">Sincronizando com o palco...</p>
+                            @endif
                         </div>
                     @endif
                 </div>

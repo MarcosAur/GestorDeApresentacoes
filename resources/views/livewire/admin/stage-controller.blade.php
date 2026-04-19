@@ -8,9 +8,11 @@
             <span class="bg-surface-container-high px-4 py-2 rounded-lg text-xs font-bold text-white/60 border border-outline-variant/20 uppercase tracking-widest">
                 Status: {{ $contest->status }}
             </span>
-            <button wire:click="finishContest" wire:confirm="Tem certeza que deseja encerrar o concurso?" class="bg-error/20 text-error border border-error/30 p-2 px-6 rounded-xl font-bold hover:bg-error/30 transition-all shadow-lg shadow-error/10">
-                Encerrar Concurso
-            </button>
+            @if($contest->status !== 'FINALIZADO')
+                <button wire:click="finishContest" wire:confirm="Tem certeza que deseja encerrar o concurso?" class="bg-error/20 text-error border border-error/30 p-2 px-6 rounded-xl font-bold hover:bg-error/30 transition-all shadow-lg shadow-error/10">
+                    Encerrar Concurso
+                </button>
+            @endif
         </div>
     </div>
 
@@ -39,10 +41,14 @@
                                 <span class="bg-primary/20 text-primary border border-primary/30 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest animate-pulse">
                                     No Palco
                                 </span>
-                            @else
+                            @elseif($p->checkin_realizado)
                                 <button wire:click="setOnStage({{ $p->id }})" class="bg-secondary/10 text-secondary border border-secondary/20 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-secondary/20 transition-all">
                                     Mandar ao Palco
                                 </button>
+                            @else
+                                <span class="bg-white/5 text-white/20 border border-white/10 px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest cursor-not-allowed" title="Competidor ainda não fez check-in">
+                                    Offline
+                                </span>
                             @endif
                         </div>
                     @empty
