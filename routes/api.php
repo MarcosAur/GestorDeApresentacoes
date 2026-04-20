@@ -11,6 +11,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 
 Route::get('/public/contests/{contest}/stage', [\App\Http\Controllers\Api\PublicController::class, 'stage']);
+Route::get('/public/rankings', [\App\Http\Controllers\Api\RankingController::class, 'indexPublic']);
 Route::get('/public/contests/{contest}/ranking', [\App\Http\Controllers\Api\RankingController::class, 'public']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/contests/{contest}/finish', [\App\Http\Controllers\Api\StageController::class, 'finishContest']);
 
     Route::get('/contests/{contest}/ranking/admin', [\App\Http\Controllers\Api\RankingController::class, 'admin']);
+    Route::post('/contests/{contest}/release-ranking', [\App\Http\Controllers\Api\RankingController::class, 'toggleRelease']);
     Route::get('/contests/{contest}/evaluation', [\App\Http\Controllers\Api\EvaluationController::class, 'show']);
     Route::post('/contests/{contest}/evaluation', [\App\Http\Controllers\Api\EvaluationController::class, 'submit']);
 

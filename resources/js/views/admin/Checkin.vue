@@ -85,6 +85,7 @@ async function startScanner() {
                 qrbox: { width: 250, height: 250 }
             },
             (decodedText) => {
+                stopScanner();
                 processCheckin(decodedText);
             },
             (errorMessage) => {

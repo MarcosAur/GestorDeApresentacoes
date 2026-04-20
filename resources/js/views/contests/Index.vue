@@ -137,7 +137,7 @@
                     
                     <div class="space-y-3 max-h-60 overflow-y-auto pr-2">
                         <div v-for="(criterion, index) in form.criteria" :key="index" class="p-4 bg-white/5 rounded-lg border border-outline-variant/10 space-y-3 relative group">
-                            <button @click="removeCriterion(index)" class="absolute top-2 right-2 text-white/20 hover:text-error transition-colors">
+                            <button type="button" @click="removeCriterion(index)" class="absolute top-2 right-2 text-white/20 hover:text-error transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>

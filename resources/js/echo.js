@@ -13,8 +13,10 @@ window.Echo = new Echo({
     enabledTransports: ['ws', 'wss'],
 });
 
+import axios from 'axios';
+
 // Remove o cabeçalho X-Socket-ID se for a string "undefined" no Axios
-window.axios.interceptors.request.use((config) => {
+axios.interceptors.request.use((config) => {
     if (config.headers) {
         // Compatibilidade com Axios 1.x (AxiosHeaders instance)
         if (typeof config.headers.delete === 'function') {

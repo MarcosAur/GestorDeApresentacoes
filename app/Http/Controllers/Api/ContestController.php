@@ -13,7 +13,7 @@ class ContestController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Contest::with(['event', 'jurors'])->latest();
+        $query = Contest::with(['event', 'jurors', 'evaluationCriteria'])->latest();
 
         if ($request->user()->hasRole('jurado') && !$request->user()->hasRole('admin')) {
             $query->whereHas('jurors', function($q) use ($request) {

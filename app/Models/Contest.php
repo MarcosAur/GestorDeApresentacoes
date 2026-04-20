@@ -18,6 +18,11 @@ class Contest extends Model
         'name',
         'status',
         'current_presentation_id',
+        'ranking_released',
+    ];
+
+    protected $casts = [
+        'ranking_released' => 'boolean',
     ];
 
     /**
@@ -50,5 +55,13 @@ class Contest extends Model
     public function presentations(): HasMany
     {
         return $this->hasMany(Presentation::class);
+    }
+
+    /**
+     * Get the current presentation for the contest.
+     */
+    public function currentPresentation(): BelongsTo
+    {
+        return $this->belongsTo(Presentation::class, 'current_presentation_id');
     }
 }

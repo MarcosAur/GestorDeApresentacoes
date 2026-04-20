@@ -78,14 +78,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the documents for the user.
-     */
-    public function documents(): HasMany
-    {
-        return $this->hasMany(UserDocument::class);
-    }
-
-    /**
      * Check if user has a specific role by slug.
      */
     public function hasRole(string $roleSlug): bool

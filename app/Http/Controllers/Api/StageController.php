@@ -42,6 +42,11 @@ class StageController extends Controller
         $request->validate(['presentation_id' => 'required|exists:presentations,id']);
         $presentationId = $request->presentation_id;
 
+        $presentation = Presentation::findOrFail($presentationId);
+        if (!$presentation->checkin_realizado) {
+            return response()->json(['message' => 'O competidor deve realizar o check-in antes de ir para o palco.'], 422);
+        }
+
         // Validar se todos votaram antes de trocar (se houver uma apresentação atual)
         if ($contest->current_presentation_id && !PontuacaoService::checkAllJurorsVoted($contest)) {
             return response()->json(['message' => 'Aguardando votos de todos os jurados para trocar.'], 422);
@@ -61,7 +66,7 @@ class StageController extends Controller
 
         $contest->save();
 
-        broadcast(new ApresentacaoAlterada($contest->id, $presentationId))->toOthers();
+        broadcast(new ApresentacaoAlterada($contest->id, $presentationId));
         
         return $this->show($contest);
     }
@@ -82,7 +87,7 @@ class StageController extends Controller
         $contest->current_presentation_id = null;
         $contest->save();
 
-        broadcast(new ApresentacaoAlterada($contest->id, null))->toOthers();
+        broadcast(new ApresentacaoAlterada($contest->id, null));
 
         return response()->json(['message' => 'Concurso Finalizado!']);
     }

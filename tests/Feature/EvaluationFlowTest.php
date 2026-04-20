@@ -12,6 +12,10 @@ use App\Services\PontuacaoService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+use App\Events\NotaAtribuida;
+use App\Events\ApresentacaoAlterada;
+use Illuminate\Support\Facades\Event as EventFacade;
+
 class EvaluationFlowTest extends TestCase
 {
     use RefreshDatabase;
@@ -20,6 +24,10 @@ class EvaluationFlowTest extends TestCase
     {
         parent::setUp();
         
+        EventFacade::fake([
+            NotaAtribuida::class,
+            ApresentacaoAlterada::class,
+        ]);
         Role::create(['name' => 'Admin', 'slug' => 'admin']);
         Role::create(['name' => 'Jurado', 'slug' => 'jurado']);
     }
@@ -89,5 +97,40 @@ class EvaluationFlowTest extends TestCase
         $response->assertJsonPath('message', 'Aguardando votos de todos os jurados para trocar.');
 
         $this->assertEquals($p1->id, $contest->fresh()->current_presentation_id);
+    }
+
+    public function test_juror_cannot_access_finalized_contest_evaluation()
+    {
+        $juror = User::factory()->create(['role_id' => Role::where('slug', 'jurado')->first()->id]);
+        $contest = Contest::factory()->create(['status' => 'FINALIZADO']);
+        $contest->jurors()->attach($juror->id);
+
+        $this->actingAs($juror);
+
+        $response = $this->getJson("/api/contests/{$contest->id}/evaluation");
+
+        $response->assertStatus(403);
+        $response->assertJsonPath('message', 'O concurso já foi finalizado. Avaliação encerrada.');
+    }
+
+    public function test_admin_cannot_set_presentation_on_stage_without_checkin()
+    {
+        $admin = User::factory()->create(['role_id' => Role::where('slug', 'admin')->first()->id]);
+        $event = Event::factory()->create(['admin_id' => $admin->id]);
+        $contest = Contest::factory()->create(['event_id' => $event->id]);
+        
+        $presentation = Presentation::factory()->create([
+            'contest_id' => $contest->id,
+            'checkin_realizado' => false
+        ]);
+
+        $this->actingAs($admin);
+
+        $response = $this->postJson("/api/contests/{$contest->id}/stage", [
+            'presentation_id' => $presentation->id
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'O competidor deve realizar o check-in antes de ir para o palco.');
     }
 }

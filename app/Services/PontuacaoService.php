@@ -41,7 +41,7 @@ class PontuacaoService
                 ]);
             }
 
-            broadcast(new \App\Events\NotaAtribuida($contest->id))->toOthers();
+            broadcast(new \App\Events\NotaAtribuida($contest->id, $juror->id))->toOthers();
         });
     }
 
@@ -69,7 +69,7 @@ class PontuacaoService
     public static function getRanking(Contest $contest)
     {
         $presentations = Presentation::where('contest_id', $contest->id)
-            ->where('status', 'APTO')
+            ->whereIn('status', ['APTO', 'FINALIZADA'])
             ->where('checkin_realizado', true)
             ->with(['scores.criterion', 'competitor'])
             ->get();

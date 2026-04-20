@@ -5,20 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserDocument extends Model
+class PresentationDocument extends Model
 {
-    /** @use HasFactory<\Database\Factories\UserDocumentFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+        'presentation_id',
         'type',
         'file_path',
     ];
 
-    public function user()
+    /**
+     * Get the presentation that owns the document.
+     */
+    public function presentation(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Presentation::class);
     }
 }

@@ -51,6 +51,23 @@
                                     <p class="text-white/50 text-xs">{{ selectedPresentation.competitor?.email }}</p>
                                 </div>
 
+                                <div v-if="selectedPresentation.documents?.length" class="space-y-2">
+                                    <p class="text-[10px] text-white/30 uppercase font-bold ml-1">Documentos Anexados</p>
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <div v-for="doc in selectedPresentation.documents" :key="doc.id" class="flex items-center justify-between p-3 bg-white/5 rounded border border-white/5 hover:border-primary/20 transition-all">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="text-primary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
+                                                <span class="text-xs text-white/70">{{ doc.type }}</span>
+                                            </div>
+                                            <a :href="`/documents/${doc.id}/download`" target="_blank" class="text-[10px] text-primary hover:underline font-bold uppercase">Download</a>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <form @submit.prevent="handleEvaluate" class="space-y-4">
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-white/70">Veredito</label>

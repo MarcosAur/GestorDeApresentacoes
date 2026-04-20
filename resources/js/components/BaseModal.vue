@@ -1,6 +1,6 @@
 <template>
-    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface/80 backdrop-blur-sm">
-        <BaseCard class="w-full max-w-lg shadow-2xl border-primary/20">
+    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface/80 backdrop-blur-sm overflow-y-auto">
+        <BaseCard class="w-full max-w-lg shadow-2xl border-primary/20 my-auto">
             <template #header>
                 <div class="flex justify-between items-center">
                     <h2 class="text-xl font-display font-bold text-primary">{{ title }}</h2>

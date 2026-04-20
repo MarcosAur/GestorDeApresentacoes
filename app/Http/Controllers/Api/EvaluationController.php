@@ -14,6 +14,10 @@ class EvaluationController extends Controller
 {
     public function show(Contest $contest)
     {
+        if ($contest->status === 'FINALIZADO') {
+            return response()->json(['message' => 'O concurso já foi finalizado. Avaliação encerrada.'], 403);
+        }
+
         if (!Auth::user()->hasRole('admin') && !$contest->jurors()->where('user_id', Auth::id())->exists()) {
             abort(403, 'Você não está vinculado como jurado deste concurso.');
         }

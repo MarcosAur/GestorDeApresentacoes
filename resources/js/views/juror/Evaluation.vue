@@ -29,16 +29,26 @@
                             
                             <form @submit.prevent="handleSubmit" class="space-y-6">
                                 <div v-for="criterion in contest.evaluation_criteria" :key="criterion.id" class="space-y-3">
-                                    <div class="flex justify-between items-end">
+                                    <div class="flex justify-between items-center">
                                         <label class="block text-sm font-bold text-white/70">{{ criterion.name }}</label>
-                                        <span class="text-2xl font-display font-bold text-secondary">{{ scores[criterion.id] }}<span class="text-white/20 text-sm">/{{ criterion.max_score }}</span></span>
+                                        <div class="flex items-center gap-3">
+                                            <input 
+                                                type="number" 
+                                                v-model.number="scores[criterion.id]" 
+                                                :min="0" 
+                                                :max="criterion.max_score" 
+                                                step="0.1"
+                                                class="w-24 bg-surface-container-highest border border-white/10 rounded px-3 py-1 text-2xl font-display font-bold text-secondary text-center"
+                                            />
+                                            <span class="text-white/20 text-sm font-bold">/{{ criterion.max_score }}</span>
+                                        </div>
                                     </div>
                                     <input 
                                         type="range" 
                                         v-model.number="scores[criterion.id]" 
                                         :min="0" 
                                         :max="criterion.max_score" 
-                                        step="0.5"
+                                        step="0.1"
                                         class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-secondary"
                                     />
                                     <div class="flex justify-between text-[10px] text-white/30 font-bold">
@@ -70,7 +80,7 @@
 
                 <div v-else class="text-center py-20 space-y-4">
                     <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-secondary"></div>
-                    <p class="text-white/30 italic">Aguardando o início das apresentações no palco...</p>
+                    <p class="text-white/30 italic">Aguarde o administrador liberar a avaliação...</p>
                 </div>
             </transition>
         </div>
@@ -120,6 +130,11 @@ async function fetchData() {
         
         loading.value = false;
     } catch (error) {
+        if (error.response?.status === 403) {
+            alert(error.response.data.message || 'Acesso negado.');
+            router.push('/');
+            return;
+        }
         console.error('Failed to fetch evaluation data', error);
         router.push('/contests');
     }

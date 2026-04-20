@@ -19,6 +19,10 @@ class CheckinController extends Controller
             return response()->json(['message' => 'QR Code inválido ou não encontrado.'], 404);
         }
 
+        if ($presentation->status !== 'APTO') {
+            return response()->json(['message' => 'Apresentação não está apta para check-in.'], 422);
+        }
+
         if ($presentation->checkin_realizado) {
             return response()->json(['message' => "Check-in já realizado para: {$presentation->competitor->name}"], 422);
         }

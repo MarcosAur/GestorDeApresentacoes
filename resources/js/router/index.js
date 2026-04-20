@@ -9,7 +9,7 @@ const routes = [
         beforeEnter: (to, from, next) => {
             const auth = useAuthStore();
             if (auth.isLoggedIn) next({ name: 'dashboard' });
-            else next();
+            else next({ name: 'login' });
         }
     },
     {
@@ -74,6 +74,16 @@ const routes = [
         path: '/public/stage/:contestId',
         name: 'public.stage',
         component: () => import('../views/public/StageViewer.vue'),
+    },
+    {
+        path: '/rankings',
+        name: 'public.rankings',
+        component: () => import('../views/public/RankingsList.vue'),
+    },
+    {
+        path: '/rankings/:contestId',
+        name: 'public.ranking.detail',
+        component: () => import('../views/public/RankingDetail.vue'),
     },
     {
         path: '/enrollment',

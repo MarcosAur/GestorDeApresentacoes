@@ -40,4 +40,9 @@ class Presentation extends Model
     {
         return $this->hasMany(PresentationScore::class);
     }
+
+    public function documents()
+    {
+        return $this->hasMany(PresentationDocument::class);
+    }
 }

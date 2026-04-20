@@ -9,14 +9,14 @@ O objetivo é estabelecer a base sólida do sistema com as convenções MySQL e 
   * **UI Base:** Layout principal com menu hambúrguer lateral esquerdo e informações do usuário no topo direito com logout. [OK]
   * **Tela de Autenticação:** Criação da tela de login para entrada na tela principal [OK]
 
-## Task 2: Estrutura de Eventos e Baremas (Em Andamento)
+## [x] Task 2: Estrutura de Eventos e Baremas (Concluída)
 
 Implementação da hierarquia de sub-eventos e critérios de avaliação customizados.
 
-  * **CRUD de Eventos:** Criar events (listagem, adição via modal, edição e deleção protegida ).
-  * **CRUD de Concursos:** Implementar contests vinculados a eventos com controle de status (AGENDADO, EM\_ANDAMENTO, FINALIZADO).
-  * **Configuração de Critérios (Barema):** Criar evaluation\_criteria. Implementar lógica para nota\_maxima, peso e prioridade\_desempate.
-  * **Vínculo de Jurados:** Tabela associativa contest\_jurors para definir quem avalia qual concurso.
+  * **CRUD de Eventos:** Criar events (listagem, adição via modal, edição e deleção protegida ). [OK]
+  * **CRUD de Concursos:** Implementar contests vinculados a eventos com controle de status (AGENDADO, EM\_ANDAMENTO, FINALIZADO). [OK]
+  * **Configuração de Critérios (Barema):** Criar evaluation\_criteria. Implementar lógica para nota\_maxima, peso e prioridade\_desempate. [OK]
+  * **Vínculo de Jurados:** Tabela associativa contest\_jurors para definir quem avalia qual concurso. [OK]
 
 ## [x] Task 3: Inscrições e Gestão de Documentos (Concluída)
 
@@ -50,14 +50,14 @@ Lógica complexa de notas e critérios de desempate.
       * Algoritmo de desempate por prioridade de critério. [OK]
   * **Controle de Palco:** Admin seleciona próxima apresentação e encerra a atual (Validando se todos os jurados votaram ). [OK]
 
-## Task 6: Consolidação e Resultados
+## [x] Task 6: Consolidação e Resultados (Concluída)
 
 Finalização do ciclo de vida do concurso e entrega de dados.
 
-  * **Ranking Admin:** Tela exclusiva para o Admin visualizar o ranking em tempo real durante o concurso.
-  * **Ranking Geral:** Tela de resultados para o público liberada apenas após o status FINALIZADO.
-  * **Otimização:** Revisar todas as queries para garantir que não haja $n+1$ (uso de with()).
-  * **Helpers:** Mover lógicas de formatação de notas ou strings para app/helpers.
+  * **Ranking Admin:** Tela exclusiva para o Admin visualizar o ranking em tempo real durante o concurso. [OK]
+  * **Ranking Geral:** Tela de resultados para o público liberada apenas após o status FINALIZADO. [OK]
+  * **Otimização:** Revisar todas as queries para garantir que não haja $n+1$ (uso de with()). [OK]
+  * **Helpers:** Mover lógicas de formatação de notas ou strings para app/helpers. [OK]
 
 ## [x] Bugfix 1: Ajustes e Correções no Sistema de Concurso e Avaliação (Concluída)
 

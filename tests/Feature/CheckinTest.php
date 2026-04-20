@@ -68,7 +68,7 @@ class CheckinTest extends TestCase
             'contest_id' => $this->contest->id,
             'competitor_id' => $competitor->id,
             'work_title' => 'Test Work',
-            'status' => 'EM_ANALISE',
+            'status' => 'APTO',
             'qr_code_hash' => 'test-hash-123'
         ]);
 
@@ -80,6 +80,30 @@ class CheckinTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertTrue($presentation->fresh()->checkin_realizado, 'Check-in should be marked as realized in the database');
+    }
+
+    public function test_checkin_fails_if_not_apto(): void
+    {
+        $competitor = User::factory()->create([
+            'role_id' => \App\Models\Role::where('slug', 'competidor')->first()->id
+        ]);
+
+        $presentation = Presentation::create([
+            'contest_id' => $this->contest->id,
+            'competitor_id' => $competitor->id,
+            'work_title' => 'Test Work',
+            'status' => 'EM_ANALISE',
+            'qr_code_hash' => 'test-hash-123'
+        ]);
+
+        $this->actingAs($this->admin);
+
+        $response = $this->postJson('/api/checkin', [
+            'hash' => 'test-hash-123'
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('message', 'Apresentação não está apta para check-in.');
     }
 
     public function test_checkin_fails_with_invalid_hash(): void
@@ -104,7 +128,7 @@ class CheckinTest extends TestCase
             'contest_id' => $this->contest->id,
             'competitor_id' => $competitor->id,
             'work_title' => 'Test Work',
-            'status' => 'EM_ANALISE',
+            'status' => 'APTO',
             'qr_code_hash' => 'test-hash-123',
             'checkin_realizado' => true
         ]);
@@ -117,5 +141,50 @@ class CheckinTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonPath('message', "Check-in já realizado para: {$competitor->name}");
+    }
+
+    public function test_presentation_index_returns_qrcode_svg_for_competitor_if_apto(): void
+    {
+        $competitor = User::factory()->create([
+            'role_id' => \App\Models\Role::where('slug', 'competidor')->first()->id
+        ]);
+
+        $apto = Presentation::create([
+            'contest_id' => $this->contest->id,
+            'competitor_id' => $competitor->id,
+            'work_title' => 'Apto Work',
+            'status' => 'APTO',
+            'qr_code_hash' => 'apto-hash',
+            'created_at' => now()->subMinutes(5)
+        ]);
+
+        $analise = Presentation::create([
+            'contest_id' => $this->contest->id,
+            'competitor_id' => $competitor->id,
+            'work_title' => 'Analise Work',
+            'status' => 'EM_ANALISE',
+            'qr_code_hash' => 'analise-hash',
+            'created_at' => now()
+        ]);
+
+        $this->actingAs($competitor);
+
+        $response = $this->getJson('/api/presentations');
+
+        $response->assertStatus(200);
+        
+        // Como a ordem pode variar, vamos encontrar os itens corretos.
+        $aptoData = collect($response->json())->firstWhere('work_title', 'Apto Work');
+        $analiseData = collect($response->json())->firstWhere('work_title', 'Analise Work');
+
+        $this->assertNotNull($aptoData, 'Apresentação "Apto Work" não encontrada');
+        $this->assertNotNull($analiseData, 'Apresentação "Analise Work" não encontrada');
+
+        $this->assertNull($analiseData['qrcode_svg']);
+        
+        $qrcode = $aptoData['qrcode_svg'];
+        $this->assertStringContainsString('<svg', $qrcode);
+        // Verifica se a cor é preta (#000000)
+        $this->assertStringContainsString('#000000', $qrcode);
     }
 }

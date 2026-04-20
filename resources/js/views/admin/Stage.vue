@@ -33,7 +33,15 @@
                             Ranking
                         </button>
                     </div>
-                    <BaseButton variant="error" @click="handleFinishContest">
+                    <BaseButton 
+                        v-if="contest.status === 'FINALIZADO'"
+                        :variant="contest.ranking_released ? 'secondary' : 'primary'" 
+                        size="sm"
+                        @click="handleToggleRankingRelease"
+                    >
+                        {{ contest.ranking_released ? 'Ocultar Ranking' : 'Liberar Ranking' }}
+                    </BaseButton>
+                    <BaseButton v-if="contest.status !== 'FINALIZADO'" variant="error" @click="handleFinishContest">
                         Finalizar Concurso
                     </BaseButton>
                 </div>
@@ -99,13 +107,19 @@
                                 <tbody class="divide-y divide-outline-variant/5">
                                     <tr v-for="(pres, index) in presentations" :key="pres.id" :class="contest.current_presentation_id === pres.id ? 'bg-primary/5' : ''">
                                         <td class="px-6 py-4 font-mono text-xs text-white/30">#{{ String(index + 1).padStart(2, '0') }}</td>
-                                        <td class="px-6 py-4 font-bold text-white">{{ pres.competitor?.name }}</td>
+                                        <td class="px-6 py-4 font-bold text-white">
+                                            <div class="flex items-center space-x-2">
+                                                <span>{{ pres.competitor?.name }}</span>
+                                                <span v-if="!pres.checkin_realizado" class="px-1.5 py-0.5 rounded bg-error/10 text-[8px] text-error border border-error/20 font-bold uppercase">Sem Check-in</span>
+                                            </div>
+                                        </td>
                                         <td class="px-6 py-4 text-sm text-white/50 italic">"{{ pres.work_title }}"</td>
                                         <td class="px-6 py-4 text-right">
                                             <BaseButton 
                                                 v-if="contest.current_presentation_id !== pres.id" 
                                                 size="sm" 
                                                 class="py-1 px-3 text-xs"
+                                                :disabled="!pres.checkin_realizado"
                                                 @click="handleSetOnStage(pres.id)"
                                             >
                                                 CHAMAR
@@ -300,11 +314,23 @@ async function handleFinishContest() {
     
     try {
         await axios.post(`/api/contests/${contestId}/finish`);
-        router.push('/contests');
+        await fetchData();
+        activeTab.value = 'ranking';
+        alert('Concurso finalizado com sucesso! Agora você pode liberar o ranking para o público.');
     } catch (error) {
         if (error.response?.data?.message) {
             alert(error.response.data.message);
         }
+    }
+}
+
+async function handleToggleRankingRelease() {
+    try {
+        const response = await axios.post(`/api/contests/${contestId}/release-ranking`);
+        contest.value.ranking_released = response.data.ranking_released;
+        alert(response.data.message);
+    } catch (error) {
+        console.error('Failed to toggle ranking release', error);
     }
 }
 

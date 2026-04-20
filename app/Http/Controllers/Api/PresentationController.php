@@ -14,9 +14,20 @@ class PresentationController extends Controller
     public function index(Request $request)
     {
         if ($request->has('analyze')) {
-            $presentations = Presentation::where('status', 'EM_ANALISE')->with(['competitor', 'contest.event'])->latest()->get();
+            $presentations = Presentation::where('status', 'EM_ANALISE')->with(['competitor', 'contest.event', 'documents'])->latest()->get();
         } else {
             $presentations = Auth::user()->presentations()->with('contest.event')->latest()->get();
+
+            // Adiciona o SVG do QR Code para apresentações APTAS para facilitar o check-in
+            $presentations->each(function ($pres) {
+                if ($pres->status === 'APTO' && $pres->qr_code_hash) {
+                    $pres->qrcode_svg = (string) \SimpleSoftwareIO\QrCode\Facades\QrCode::size(250)
+                        ->color(0, 0, 0)
+                        ->backgroundColor(0, 0, 0, 0)
+                        ->margin(1)
+                        ->generate($pres->qr_code_hash);
+                }
+            });
         }
         return response()->json($presentations);
     }
