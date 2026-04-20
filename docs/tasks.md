@@ -59,56 +59,11 @@ Finalização do ciclo de vida do concurso e entrega de dados.
   * **Otimização:** Revisar todas as queries para garantir que não haja $n+1$ (uso de with()). [OK]
   * **Helpers:** Mover lógicas de formatação de notas ou strings para app/helpers. [OK]
 
-## [x] Bugfix 1: Ajustes e Correções no Sistema de Concurso e Avaliação (Concluída)
+## [x] Task 7: Documentação Técnica e Refatoração (Concluída)
 
-📋 Descrição Geral
+Consolidação do conhecimento do projeto e atualização dos guias de referência.
 
-Esta tarefa contempla uma série de ajustes na listagem de candidatos, interface de avaliação do jurado, correções de fluxo de status e resolução de problemas de reatividade via WebSocket.
+  * **Novos Documentos:** Criação de `architecture.md`, `database.md` e `features.md`. [OK]
+  * **Refatoração:** Limpeza de redundâncias no `design.md` e `prd.md`. [OK]
+  * **Sincronização:** Atualização da "Fonte da Verdade" no `GEMINI.md` para refletir a stack SPA (Vue 3). [OK]
 
-🛠️ Detalhamento das Atividades
-
-1. Gestão de Candidatos e Palco
-
-[x] Exibição de Candidatos Aptos: - Alterar a query/filtro da listagem de palco para exibir todos os candidatos com status "Apto", independentemente de terem realizado o login no sistema. [OK]
-
-[x] Trava de Botão "Enviar para o Palco": - Adicionar uma condicional na interface administrativa: o botão de ação para enviar o candidato ao palco só deve ficar habilitado/visível se o candidato estiver com a flag logged_in: true (checkin_realizado). [OK]
-
-2. Interface do Jurado (UX/UI)
-
-[x] Input de Nota: - Substituir o componente de Slider pelo componente de Campo de Texto (Input) na tela de atribuição de notas. [OK]
-
-Garantir validação numérica (ex: 0 a 10) e suporte a casas decimais se necessário. [OK]
-
-3. Reatividade e WebSockets (Sincronização)
-
-[x] Correção do Real-time (Admin): - Investigar por que a tela de palco do administrador não está refletindo as mudanças de estado sem Refresh (F5). [OK - Implementado NotaAtribuida]
-
-[x] Correção do Real-time (Jurado): - Investigar e corrigir a falha na atualização reativa da tela de avaliação do jurado. [OK]
-
-Checklist: Verificar listeners de socket, emissão de eventos no backend e hooks de estado no frontend. [OK]
-
-4. Fluxo de Status da Apresentação
-
-[x] Finalização de Ciclo: - Implementar lógica para que, assim que uma apresentação for removida do palco, seu status seja automaticamente alterado para FINALIZADA. [OK]
-
-[x] Trava de Retorno: - Impedir que apresentações com status FINALIZADA possam ser movidas de volta para o estado "Em Apresentação" ou que permitam novas avaliações. [OK]
-
-5. Regras de Negócio e Encerramento
-
-[x] Visibilidade do Botão "Encerrar": - O botão de "Encerrar Concurso" deve ser ocultado ou desabilitado caso o status do concurso já conste como ENCERRADO ou FINALIZADO. [OK]
-
-[x] Tratamento de Concurso Finalizado (Jurado): - Corrigir o Infinite Loading na tela de avaliação quando o concurso já acabou. [OK]
-
-Solução esperada: Redirecionar o jurado para uma tela de "Concurso Finalizado" ou exibir uma mensagem clara de que as avaliações estão encerradas. [OK]
-
-📌 Critérios de Aceite
-
-Candidatos offline aparecem na lista, mas não podem subir ao palco. [OK]
-
-Jurados digitam a nota manualmente. [OK]
-
-Mudanças no palco aparecem instantaneamente para Admin e Jurado sem F5. [OK]
-
-Apresentações encerradas não permitem reentrada. [OK]
-
-Jurado não fica preso em telas de carregamento após o fim do evento. [OK]

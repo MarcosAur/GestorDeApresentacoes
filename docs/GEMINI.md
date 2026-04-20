@@ -14,46 +14,44 @@ Plataforma para gestão de concursos em eventos (K-Pop, Cosplay, etc.), substitu
 ---
 
 ## 2. Stack Tecnológica
-- **Backend:** Laravel 12 (PHP 8.2+)
-- **Frontend:** Blade Templates + Tailwind CSS + Livewire (Reatividade)
+- **Backend:** Laravel 12 (API RESTful)
+- **Frontend:** Vue 3 (SPA) + Pinia + Vue Router + Tailwind CSS
 - **Real-time:** Laravel Reverb (WebSockets)
-- **Autenticação:** Laravel Sanctum (SPA/Mobile)
+- **Autenticação:** Laravel Sanctum
 - **Banco de Dados:** MySQL 8.0
-- **Bibliotecas Chave:** `simplesoftwareio/simple-qrcode`
+- **Bibliotecas Chave:** `simplesoftwareio/simple-qrcode`, `laravel/echo`, `pusher-js`
 
 ---
 
-## 3. Arquitetura e Padrões de Código
+## 3. Documentação de Referência
+Para informações detalhadas, consulte:
+- **`architecture.md`**: Padrões de projeto, Service Layer e estrutura SPA.
+- **`database.md`**: Esquema de tabelas, relacionamentos e SoftDeletes.
+- **`features.md`**: Mapeamento de funcionalidades por perfil de usuário.
+- **`frontend.md`**: Design System "Editorial Elétrico", cores e tipografia.
+- **`prd.md`**: Visão de produto e objetivos do sistema.
+
+---
+
+## 4. Arquitetura e Padrões de Código
 ### Convenções Gerais
 - **Idioma:** Nomes de variáveis, classes e tabelas **sempre em Inglês**.
 - **DB:** Colunas em `snake_case`. Todos os models com `SoftDeletes`.
 - **PSR:** Seguir padrões PSR-1, PSR-2 e PSR-12.
-- **MVC + Service Layer:** Lógica isolada em `app/Services` com método estático `run(...)`.
-- **Helpers:** Lógicas compartilhadas em `app/helpers`.
-### Seguranca: 
-    - Validação via `Form Request` em todas as entradas (obrigatório para rotas e Livewire).
-    - API REST com Bearer tokens; redirecionamento se token for inválido.
-    - Middleware de acesso para validar permissões por slug de Role e vínculo jurado-concurso.
-    - **Gestão de Arquivos:** Uso de S3 com links temporários (5 min) para acesso privado.
+- **MVC + Service Layer:** Lógica isolada em `app/Services` com método estático de entrada.
+- **API First:** Validação via `Form Request` em todas as entradas. Redirecionamento automático se o token Sanctum for inválido.
+- **Gestão de Arquivos:** Uso de S3 com links temporários (5 min) para acesso privado.
+- **Entidades Principais:** `users`, `roles`, `events`, `contests`, `presentations`, `presentation_documents`, `evaluation_criteria`, `presentation_scores`, `contest_jurors`.
 
 
-### Regras de Negócio e Banco de Dados
-- **Deleção:** Registros só podem ser deletados se não possuírem dependências associadas.
-- **Papéis (Roles):** Atribuição automática em telas de criação específicas (Competidor/Público) ou manual pelo Admin (Jurados/Admins).
-- **Entidades:** `users`, `events`, `contests`, `presentations`, `evaluation_criteria`, `presentation_scores`, `roles`, `user_documents`, `contest_jurors` (N:M).
+## 5. Estratégia Real-Time (Laravel Reverb)
+- **Canais:** Públicos e Privados via `routes/channels.php`.
+- **Consumo:** Reatividade instantânea na SPA via `Laravel Echo`.
+- **Eventos:** `ApresentacaoAlterada`, `NotaAtribuida`.
 
 ---
 
-## 4. Estratégia Real-Time (Laravel Reverb)
-- **Evento:** `ApresentacaoAlterada`.
-- **Fluxo:** Disparado via Service quando `apresentacao_atual_id` em `contests` muda.
-- **Consumo:** 
-    - Público: Re-renderiza área do palco via Livewire no canal `concurso.{id}`.
-    - Jurado: Reset automático do formulário de notas e carregamento do novo competidor.
-
----
-
-## 5. Design System: "Editorial Elétrico"
+## 6. Design System: "Editorial Elétrico"
 ### Estética e Cores
 - **Conceito:** "Palco Digital" com alto contraste e neons sobre fundo "Obsidiana".
 - **Hierarquia de Superfícies:**
@@ -70,14 +68,14 @@ Plataforma para gestão de concursos em eventos (K-Pop, Cosplay, etc.), substitu
 
 ---
 
-## 6. Funcionalidades Críticas
-- **Check-in via QR Code:** Competidor gera QR Code; Admin escaneia para marcar como "Presente".
-- **Controle de Palco:** Admin seleciona próxima apresentação; validação de votos dos jurados antes de encerrar.
-- **Ranking Ponderado:** Cálculo em tempo real (Nota × Peso) com critérios de desempate por prioridade.
+## 7. Funcionalidades Críticas
+- **Check-in via QR Code:** Scanner integrado na SPA para credenciamento.
+- **Controle de Palco:** Sincronização automática entre Admin, Jurados e Público.
+- **Ranking Ponderado:** Cálculo instantâneo com desempate por prioridade.
 
 ---
 
-## 7. Diretrizes para o Agente (Fluxo de Trabalho)
+## 8. Diretrizes para o Agente (Fluxo de Trabalho)
 - **Contexto:** SEMPRE utilize os arquivos da pasta `docs/**` como contexto principal para qualquer implementação ou tomada de decisão arquitetural.
 - **Testes:** É MANDATÓRIO criar testes automatizados (Pest ou PHPUnit) para cada nova funcionalidade ou regra de negócio implementada.
 - **Changelog:** Ao finalizar cada tarefa do roadmap, o arquivo `CHANGELOG.md` deve ser atualizado em Português (PT-BR) seguindo o padrão [Keep a Changelog](https://keepachangelog.com/pt-br/1.1.0/).
@@ -85,13 +83,14 @@ Plataforma para gestão de concursos em eventos (K-Pop, Cosplay, etc.), substitu
 
 ---
 
-## 8. Roadmap de Implementação
-1. **Fundação:** Setup, Auth Sanctum, Roles, Users e UI Base (Menu hambúrguer).
-2. **Eventos & Baremas:** CRUDs de Eventos, Concursos e Critérios (Baremas).
-3. **Inscrições:** Apresentações e Gestão de Documentos (DocumentService/PresentationService).
-4. **Real-Time:** Setup Reverb e integração QR Code/Check-in.
-5. **Avaliação:** Sistema de notas (PontuacaoService) e Controle de Palco.
-6. **Resultados:** Ranking Admin e Público, otimizações de query (evitar n+1).
+## 9. Roadmap de Implementação
+1. **Fundação:** Setup, Auth Sanctum, Roles, Users e SPA Base. [Concluído]
+2. **Eventos & Baremas:** CRUDs de Eventos, Concursos e Critérios. [Concluído]
+3. **Inscrições:** Gestão de Documentos (S3) e Apresentações. [Concluído]
+4. **Real-Time:** Setup Reverb, Echo e Integração QR Code. [Concluído]
+5. **Avaliação:** Sistema de notas (Barema) e Controle de Palco. [Concluído]
+6. **Resultados:** Ranking Admin e Público, Visibilidade Controlada. [Concluído]
+7. **Documentação:** Consolidação técnica e refatoração de guias. [Concluído]
 
 ---
 
