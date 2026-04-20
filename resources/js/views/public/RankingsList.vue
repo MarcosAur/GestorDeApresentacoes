@@ -29,12 +29,25 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div class="inline-block px-2 py-1 rounded bg-white/5 text-[10px] text-white/40 font-bold uppercase tracking-widest border border-white/10">
-                            {{ contest.event?.name }}
+                        <div class="flex items-center justify-between">
+                            <div class="inline-block px-2 py-1 rounded bg-white/5 text-[10px] text-white/40 font-bold uppercase tracking-widest border border-white/10">
+                                {{ contest.event?.name }}
+                            </div>
+                            <div v-if="authStore.isAdmin && !contest.ranking_released" class="px-2 py-0.5 rounded bg-error/10 text-[9px] text-error font-bold uppercase tracking-wider border border-error/20">
+                                Não Lançado
+                            </div>
                         </div>
                         <h2 class="text-2xl font-display font-bold text-white group-hover:text-primary transition-colors leading-tight">
                             {{ contest.name }}
                         </h2>
+                        <div v-if="authStore.isAdmin && !contest.ranking_released" class="pt-2">
+                            <button 
+                                @click.stop="releaseRanking(contest)"
+                                class="w-full py-2 bg-primary/20 hover:bg-primary/40 text-primary text-[10px] font-bold uppercase tracking-widest rounded-xl border border-primary/30 transition-all"
+                            >
+                                Lançar Ranking
+                            </button>
+                        </div>
                         <div class="pt-4 flex items-center justify-between border-t border-white/5">
                             <span class="text-[10px] text-white/20 uppercase font-bold tracking-widest">Ver Resultados</span>
                             <span class="text-white/10">#{{ contest.id }}</span>
@@ -54,11 +67,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useAuthStore } from '../../stores/auth';
 
+const authStore = useAuthStore();
 const rankings = ref([]);
 const loading = ref(true);
 
-onMounted(async () => {
+const fetchRankings = async () => {
+    loading.value = true;
     try {
         const response = await axios.get('/api/public/rankings');
         rankings.value = response.data;
@@ -67,5 +83,22 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
-});
+};
+
+const releaseRanking = async (contest) => {
+    if (!confirm(`Deseja realmente lançar o ranking de "${contest.name}"? Isso o tornará público para todos os usuários.`)) {
+        return;
+    }
+
+    try {
+        await axios.post(`/api/contests/${contest.id}/release-ranking`);
+        contest.ranking_released = true;
+        alert('Ranking lançado com sucesso!');
+    } catch (error) {
+        console.error('Failed to release ranking', error);
+        alert('Erro ao lançar ranking. Tente novamente.');
+    }
+};
+
+onMounted(fetchRankings);
 </script>

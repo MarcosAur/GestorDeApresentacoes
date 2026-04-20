@@ -24,16 +24,22 @@ class RankingController extends Controller
 
     /**
      * Retorna a lista de rankings liberados para o público.
+     * Admins podem ver rankings não liberados.
      */
     public function indexPublic()
     {
-        $contests = Contest::where('status', 'FINALIZADO')
-            ->where('ranking_released', true)
-            ->with('event')
-            ->latest()
-            ->get();
+        $user = auth('sanctum')->user();
+        $isAdmin = $user && $user->role && $user->role->slug === 'admin';
 
-        return response()->json($contests);
+        $query = Contest::where('status', 'FINALIZADO')
+            ->with('event')
+            ->latest();
+
+        if (!$isAdmin) {
+            $query->where('ranking_released', true);
+        }
+
+        return response()->json($query->get());
     }
 
     /**
@@ -53,10 +59,14 @@ class RankingController extends Controller
 
     /**
      * Retorna o ranking público apenas se o concurso estiver FINALIZADO e LIBERADO.
+     * Admins podem visualizar mesmo que não esteja liberado.
      */
     public function public(Contest $contest)
     {
-        if ($contest->status !== 'FINALIZADO' || !$contest->ranking_released) {
+        $user = auth('sanctum')->user();
+        $isAdmin = $user && $user->role && $user->role->slug === 'admin';
+
+        if ($contest->status !== 'FINALIZADO' || (!$contest->ranking_released && !$isAdmin)) {
             return response()->json([
                 'message' => 'O ranking não está disponível para visualização pública.',
                 'status' => $contest->status,

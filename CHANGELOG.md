@@ -5,6 +5,16 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado no [Keep a Changelog](https://keepachangelog.com/pt-br/1.1.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-04-20
+
+### Adicionado
+- **Visibilidade de Rankings por Perfil**: Implementação de lógica no `RankingController` para permitir que Admins visualizem rankings não lançados.
+- **Gestão de Rankings no Frontend**: 
+    - Tag "Não Lançado" e botão "Lançar Ranking" na `RankingsList.vue` para Admins.
+    - Alerta de ranking não lançado na `RankingDetail.vue`.
+    - Bloqueio de acesso a rankings não lançados para usuários comuns (Erro 403).
+- **Testes de Visibilidade**: Criação de `RankingVisibilityTest.php` para validar as permissões de acesso aos rankings.
+
 ## [0.4.0] - 2026-04-20
 
 ### Adicionado
